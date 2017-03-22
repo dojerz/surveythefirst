@@ -13,10 +13,10 @@ namespace FirstLook
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class testDBEntities : DbContext
+    public partial class UpcMacroDBEntities : DbContext
     {
-        public testDBEntities()
-            : base("name=testDBEntities")
+        public UpcMacroDBEntities()
+            : base("name=UpcMacroDBEntities")
         {
         }
     
@@ -25,6 +25,6 @@ namespace FirstLook
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Table> Table { get; set; }
+        public virtual DbSet<Bazis> Bazis { get; set; }
     }
 }

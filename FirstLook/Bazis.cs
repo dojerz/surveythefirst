@@ -12,9 +12,12 @@ namespace FirstLook
     using System;
     using System.Collections.Generic;
     
-    public partial class Table
+    public partial class Bazis
     {
         public int Id { get; set; }
-        public string HelyszinMegnev { get; set; }
+        public string Megnevezes { get; set; }
+        public int EpitmenytipusID { get; set; }
+        public string WgsLAT { get; set; }
+        public string WgsLON { get; set; }
     }
 }
