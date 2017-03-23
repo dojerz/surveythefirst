@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bázisok:</h1>
+@Html.ActionLink("Új hozzáadása", "Create", "Base")
+<table>
+    <tr>
+        <th>
+            Helyszín
+        </th>
+        <th>
+            Megnevezés
+        </th>
+        <th>
+            Építménytípus
+        </th>
+        <th>
+            WgsLAT
+        </th>
+        <th>
+            WgsLON
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.bazisokView)
+    {
+        <tr>
+            <td>
+                @item.HelyszinMegnev
+            </td>
+            <td>
+                @item.Megnevezes
+            </td>
+            <td>
+                @item.EpitmenytipusID
+            </td>
+            <td>
+                @item.WgsLAT
+            </td>
+            <td>
+                @item.WgsLON
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+
+
