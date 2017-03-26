@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FirstLook.Bazis
+
+<div>
+    <h4>Bázis részletek</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HelyszinMegnev)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HelyszinMegnev)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Megnevezes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Megnevezes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EpitmenytipusID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EpitmenytipusID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WgsLAT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WgsLAT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WgsLON)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WgsLON)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Módosítás", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Vissza a listához", "Index")
+</p>

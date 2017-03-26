@@ -323,6 +323,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Base\Index.cshtml" />
     <Content Include="Views\Base\Create.cshtml" />
+    <Content Include="Views\Base\Edit.cshtml" />
+    <Content Include="Views\Base\Details.cshtml" />
+    <Content Include="Views\Base\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
