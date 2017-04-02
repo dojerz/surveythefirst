@@ -5,59 +5,95 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 using System.Data.Entity;
+using FirstLook.Models;
 
 namespace FirstLook.Controllers
 {
     public class BaseController : Controller
     {
-        private BazisokEntities bazisok = new BazisokEntities();
+        private BazisokEntities4 bazisok = new BazisokEntities4();
+        //private List<Base> bases = new List<Base>();
+        //private BazisokEntities bazisok = new BazisokEntities();
+
+        private Base getBaseByID(int ID, List<Base> bases)
+        {
+
+            int listLength = bases.Count;
+            for( int i = 0; i < listLength; i++ )
+            {
+                if( bases[i].ID == ID )
+                {
+                    return bases[i];
+                }
+            }
+            return null;
+        }
 
         // GET: Base
         public ActionResult Index()
         {
-            ViewBag.bazisokView = bazisok.Bazis.ToList();
-            return View();
+            List<Base> bases = new List<Base>();
+            var existingBases = bazisok.Bases.ToList();
+            var buildingTypes = bazisok.BuildingTypes.ToList();
+            var settlements = bazisok.Settlements.ToList();
+            var listength = existingBases.Count();
+            for( int i = 0; i < listength; i++ )
+            {
+                bases.Add( new Base(existingBases[i], buildingTypes, settlements) );
+            }
+            //ViewBag.bazisokView = bazisok.Bazis.ToList();
+            return View(bases);
         }
 
         // GET: Base/Create
         public ActionResult Create()
         {
-            return View();
+            var buildingTypes = bazisok.BuildingTypes.ToList();
+            var settlements = bazisok.Settlements.ToList();
+            return View(new Base(buildingTypes, settlements));
         }
-
+        
         // POST: Base/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "HelyszinMegnev,Megnevezes,EpitmenytipusID,WGsLAT,WgsLON")] Bazis b)
+        public ActionResult Create(Base b)
         {
             if (ModelState.IsValid)
             {
-                var existingBases = bazisok.Bazis.ToList();
-                var maxId = existingBases.Max(i => i.Id);
-                b.Id = maxId + 1;
-                /*Bazis b = new Bazis();
-                b.Id = 3;
-                b.HelyszinMegnev = Place;
-                b.Megnevezes = Name;
-                b.EpitmenytipusID = BuildingTypeID;
-                b.WgsLAT = WgsLAT;
-                b.WgsLON = WgsLON;*/
-                bazisok.Bazis.Add(b);
+                var existingBases = bazisok.Bases.ToList();
+                var maxId = 0;
+                if (existingBases.Count() > 0)
+                {
+                    maxId = existingBases.Max(i => i.ID);
+                    maxId = maxId + 1;
+                }
+                b.ID = maxId;
+                Bases bs = b.createDbBase();
+                bazisok.Bases.Add(bs);
                 bazisok.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             return View();
         }
-
-        // GET: Movies/Edit/5
+        
+        // GET: Base/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bazis b = bazisok.Bazis.Find(id);
+            List<Base> bases = new List<Base>();
+            var existingBases = bazisok.Bases.ToList();
+            var buildingTypes = bazisok.BuildingTypes.ToList();
+            var settlements = bazisok.Settlements.ToList();
+            var listength = existingBases.Count();
+            for (int i = 0; i < listength; i++)
+            {
+                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
+            }
+            Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
                 return HttpNotFound();
@@ -65,43 +101,62 @@ namespace FirstLook.Controllers
             return View(b);
         }
 
-        // POST: Movies/Edit/5 
+        // POST: Base/Edit/5 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,HelyszinMegnev,Megnevezes,EpitmenytipusID,WGsLAT,WgsLON")] Bazis b)
+        public ActionResult Edit(Base b)
         {
             if (ModelState.IsValid)
             {
-                bazisok.Entry(b).State = EntityState.Modified;
+                Bases bs = b.createDbBase();
+                bazisok.Entry(bs).State = EntityState.Modified;
                 bazisok.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(b);
         }
-
-        // GET: Movies/Details/5
+        
+        // GET: Base/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bazis b = bazisok.Bazis.Find(id);
+            List<Base> bases = new List<Base>();
+            var existingBases = bazisok.Bases.ToList();
+            var buildingTypes = bazisok.BuildingTypes.ToList();
+            var settlements = bazisok.Settlements.ToList();
+            var listength = existingBases.Count();
+            for (int i = 0; i < listength; i++)
+            {
+                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
+            }
+            Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
                 return HttpNotFound();
             }
             return View(b);
         }
-
-        // GET: Movies/Delete/5
+        
+        // GET: Base/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bazis b = bazisok.Bazis.Find(id);
+            List<Base> bases = new List<Base>();
+            var existingBases = bazisok.Bases.ToList();
+            var buildingTypes = bazisok.BuildingTypes.ToList();
+            var settlements = bazisok.Settlements.ToList();
+            var listength = existingBases.Count();
+            for (int i = 0; i < listength; i++)
+            {
+                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
+            }
+            Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
                 return HttpNotFound();
@@ -109,13 +164,13 @@ namespace FirstLook.Controllers
             return View(b);
         }
 
-        // POST: Movies/Delete/5
+        // POST: Base/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Bazis b = bazisok.Bazis.Find(id);
-            bazisok.Bazis.Remove(b);
+            Bases bs = bazisok.Bases.Find(id);
+            bazisok.Bases.Remove(bs);
             bazisok.SaveChanges();
             return RedirectToAction("Index");
         }

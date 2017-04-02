@@ -2,52 +2,73 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Bázisok:</h1>
-@Html.ActionLink("Új hozzáadása", "Create", "Base")
-<table>
-    <tr>
-        <th>
-            Helyszín
-        </th>
-        <th>
-            Megnevezés
-        </th>
-        <th>
-            Építménytípus
-        </th>
-        <th>
-            WgsLAT
-        </th>
-        <th>
-            WgsLON
-        </th>
-    </tr>
-    @foreach (var item in ViewBag.bazisokView)
-    {
+
+    @model List<FirstLook.Models.Base>
+
+    <h1>Bázisok:</h1>
+    @Html.ActionLink("Új hozzáadása", "Create", "Base")
+    <table>
         <tr>
-            <td>
-                @item.HelyszinMegnev
-            </td>
-            <td>
-                @item.Megnevezes
-            </td>
-            <td>
-                @item.EpitmenytipusID
-            </td>
-            <td>
-                @item.WgsLAT
-            </td>
-            <td>
-                @item.WgsLON
-            </td>
-            <td>
-                @Html.ActionLink("Módosítás", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Részletek", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Törlés", "Delete", new { id = item.Id })
-            </td>
+            <th>
+                Megnevezés
+            </th>
+            <th>
+                Település
+            </th>
+            <th>
+                Építmény típusa
+            </th>
+            <th>
+                Átviteli technológia
+            </th>
+            <th>
+                Kapacitás
+            </th>
+            <th>
+                Tengerszint feletti magasság
+            </th>
+            <th>
+                WgsLAT
+            </th>
+            <th>
+                WgsLON
+            </th>
         </tr>
-    }
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.SelectedSettlementName
+                </td>
+                <td>
+                    @item.SelectedBuildingTypeName
+                </td>
+                <td>
+                    @item.Transmission
+                </td>
+                <td>
+                    @item.Capacity
+                </td>
+                <td>
+                    @item.Altitude
+                </td>
+                <td>
+                    @item.WGsLAT
+                </td>
+                <td>
+                    @item.WgsLON
+                </td>
+                <td>
+                    @Html.ActionLink("Módosítás", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Részletek", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Törlés", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </table>
 
 
 

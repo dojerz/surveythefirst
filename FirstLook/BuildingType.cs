@@ -12,15 +12,18 @@ namespace FirstLook
     using System;
     using System.Collections.Generic;
     
-    public partial class Bazis
+    public partial class BuildingType
     {
-        public int Id { get; set; }
-        public string HelyszinMegnev { get; set; }
-        public string Megnevezes { get; set; }
-        public Nullable<int> BuildingID { get; set; }
-        public string WgsLAT { get; set; }
-        public string WgsLON { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public BuildingType()
+        {
+            this.Bazis = new HashSet<Bazis>();
+        }
     
-        public virtual BuildingType BuildingType { get; set; }
+        public int Id { get; set; }
+        public string Megnevezes { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Bazis> Bazis { get; set; }
     }
 }

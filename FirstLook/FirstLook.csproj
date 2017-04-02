@@ -169,8 +169,41 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="BaseAndBuildingType.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseAndBuildingType.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BaseAndBuildingType.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseAndBuildingType.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BaseAndBuildingType.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseAndBuildingType.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="BaseModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BaseModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BaseModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Bases.cs">
+      <DependentUpon>EntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Bazis.cs">
-      <DependentUpon>BazisModel.tt</DependentUpon>
+      <DependentUpon>BaseAndBuildingType.tt</DependentUpon>
     </Compile>
     <Compile Include="BazisModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -187,10 +220,46 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BazisModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="BuildingType.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingType.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingType.cs">
+      <DependentUpon>BaseAndBuildingType.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingType.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingType.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingType1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingType.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingTypes.cs">
+      <DependentUpon>EntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="EntityModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -214,6 +283,9 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settlements.cs">
+      <DependentUpon>EntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Table.cs">
       <DependentUpon>Model1.tt</DependentUpon>
@@ -232,6 +304,26 @@
     <Content Include="App_Data\UpcMacroDB_log.ldf">
       <DependentUpon>UpcMacroDB.mdf</DependentUpon>
     </Content>
+    <Content Include="BaseAndBuildingType.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BaseAndBuildingType.edmx</DependentUpon>
+      <LastGenOutput>BaseAndBuildingType.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BaseAndBuildingType.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BaseAndBuildingType.edmx</DependentUpon>
+      <LastGenOutput>BaseAndBuildingType.cs</LastGenOutput>
+    </Content>
+    <Content Include="BaseModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BaseModel.edmx</DependentUpon>
+      <LastGenOutput>BaseModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BaseModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BaseModel.edmx</DependentUpon>
+      <LastGenOutput>BaseModel.cs</LastGenOutput>
+    </Content>
     <Content Include="BazisModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>BazisModel.edmx</DependentUpon>
@@ -242,8 +334,28 @@
       <DependentUpon>BazisModel.edmx</DependentUpon>
       <LastGenOutput>BazisModel.cs</LastGenOutput>
     </Content>
+    <Content Include="BuildingType.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BuildingType.edmx</DependentUpon>
+      <LastGenOutput>BuildingType.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BuildingType.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BuildingType.edmx</DependentUpon>
+      <LastGenOutput>BuildingType1.cs</LastGenOutput>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="EntityModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EntityModel.edmx</DependentUpon>
+      <LastGenOutput>EntityModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="EntityModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EntityModel.edmx</DependentUpon>
+      <LastGenOutput>EntityModel.cs</LastGenOutput>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -274,6 +386,34 @@
     </EntityDeploy>
     <Content Include="BazisModel.edmx.diagram">
       <DependentUpon>BazisModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="BaseModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BaseModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="BaseModel.edmx.diagram">
+      <DependentUpon>BaseModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="BuildingType.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BuildingType.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="BuildingType.edmx.diagram">
+      <DependentUpon>BuildingType.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="BaseAndBuildingType.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BaseAndBuildingType.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="BaseAndBuildingType.edmx.diagram">
+      <DependentUpon>BaseAndBuildingType.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="EntityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EntityModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="EntityModel.edmx.diagram">
+      <DependentUpon>EntityModel.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

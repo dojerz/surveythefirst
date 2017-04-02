@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="BaseModels.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Bases">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="BuildingID" Type="int" />
+          <Property Name="Transmission" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Technology" Type="nvarchar" MaxLength="50" />
+          <Property Name="Capacity" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Altitude" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="WgsLAT" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="WgsLON" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EOVX" Type="nvarchar" MaxLength="50" />
+          <Property Name="EOVY" Type="nvarchar" MaxLength="50" />
+          <Property Name="SettlementID" Type="int" />
+          <Property Name="Address" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Owner" Type="nvarchar(max)" />
+          <Property Name="Connection" Type="nvarchar(max)" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="Date" Type="date" />
+        </EntityType>
+        <EntityType Name="BuildingTypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Type" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Settlements">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Settlement" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_dbo_Bases_dbo_BuildingType_Id">
+          <End Role="BuildingTypes" Type="Self.BuildingTypes" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Bases" Type="Self.Bases" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BuildingTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Bases">
+              <PropertyRef Name="BuildingID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Bases_dbo_Settlement_Id">
+          <End Role="Settlements" Type="Self.Settlements" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Bases" Type="Self.Bases" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Settlements">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Bases">
+              <PropertyRef Name="SettlementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BaseModelsStoreContainer">
+          <EntitySet Name="Bases" EntityType="Self.Bases" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BuildingTypes" EntityType="Self.BuildingTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Settlements" EntityType="Self.Settlements" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_dbo_Bases_dbo_BuildingType_Id" Association="Self.FK_dbo_Bases_dbo_BuildingType_Id">
+            <End Role="BuildingTypes" EntitySet="BuildingTypes" />
+            <End Role="Bases" EntitySet="Bases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Bases_dbo_Settlement_Id" Association="Self.FK_dbo_Bases_dbo_Settlement_Id">
+            <End Role="Settlements" EntitySet="Settlements" />
+            <End Role="Bases" EntitySet="Bases" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BaseModels" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Bases">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BuildingID" Type="Int32" />
+          <Property Name="Transmission" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Technology" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Capacity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Altitude" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="WgsLAT" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="WgsLON" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EOVX" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EOVY" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SettlementID" Type="Int32" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Owner" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Connection" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="BuildingTypes" Relationship="Self.FK_dbo_Bases_dbo_BuildingType_Id" FromRole="Bases" ToRole="BuildingTypes" />
+          <NavigationProperty Name="Settlements" Relationship="Self.FK_dbo_Bases_dbo_Settlement_Id" FromRole="Bases" ToRole="Settlements" />
+        </EntityType>
+        <EntityType Name="BuildingTypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Bases" Relationship="Self.FK_dbo_Bases_dbo_BuildingType_Id" FromRole="BuildingTypes" ToRole="Bases" />
+        </EntityType>
+        <EntityType Name="Settlements">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Settlement" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Bases" Relationship="Self.FK_dbo_Bases_dbo_Settlement_Id" FromRole="Settlements" ToRole="Bases" />
+        </EntityType>
+        <Association Name="FK_dbo_Bases_dbo_BuildingType_Id">
+          <End Role="BuildingTypes" Type="Self.BuildingTypes" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Bases" Type="Self.Bases" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BuildingTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Bases">
+              <PropertyRef Name="BuildingID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Bases_dbo_Settlement_Id">
+          <End Role="Settlements" Type="Self.Settlements" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Bases" Type="Self.Bases" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Settlements">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Bases">
+              <PropertyRef Name="SettlementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BazisokEntities4" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Bases" EntityType="Self.Bases" />
+          <EntitySet Name="BuildingTypes" EntityType="Self.BuildingTypes" />
+          <EntitySet Name="Settlements" EntityType="Self.Settlements" />
+          <AssociationSet Name="FK_dbo_Bases_dbo_BuildingType_Id" Association="Self.FK_dbo_Bases_dbo_BuildingType_Id">
+            <End Role="BuildingTypes" EntitySet="BuildingTypes" />
+            <End Role="Bases" EntitySet="Bases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Bases_dbo_Settlement_Id" Association="Self.FK_dbo_Bases_dbo_Settlement_Id">
+            <End Role="Settlements" EntitySet="Settlements" />
+            <End Role="Bases" EntitySet="Bases" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BaseModelsStoreContainer" CdmEntityContainer="BazisokEntities4">
+          <EntitySetMapping Name="Bases">
+            <EntityTypeMapping TypeName="BaseModels.Bases">
+              <MappingFragment StoreEntitySet="Bases">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="BuildingID" ColumnName="BuildingID" />
+                <ScalarProperty Name="Transmission" ColumnName="Transmission" />
+                <ScalarProperty Name="Technology" ColumnName="Technology" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="WgsLAT" ColumnName="WgsLAT" />
+                <ScalarProperty Name="WgsLON" ColumnName="WgsLON" />
+                <ScalarProperty Name="EOVX" ColumnName="EOVX" />
+                <ScalarProperty Name="EOVY" ColumnName="EOVY" />
+                <ScalarProperty Name="SettlementID" ColumnName="SettlementID" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Connection" ColumnName="Connection" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BuildingTypes">
+            <EntityTypeMapping TypeName="BaseModels.BuildingTypes">
+              <MappingFragment StoreEntitySet="BuildingTypes">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settlements">
+            <EntityTypeMapping TypeName="BaseModels.Settlements">
+              <MappingFragment StoreEntitySet="Settlements">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Settlement" ColumnName="Settlement" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

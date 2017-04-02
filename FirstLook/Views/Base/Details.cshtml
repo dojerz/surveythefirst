@@ -2,54 +2,70 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model FirstLook.Bazis
+@model FirstLook.Models.Base
 
 <div>
     <h4>Bázis részletek</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.HelyszinMegnev)
+            @Html.DisplayName("Megnevezés")
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.HelyszinMegnev)
+            @Html.DisplayFor(model => model.Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Megnevezes)
+            @Html.DisplayName("Település")
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Megnevezes)
+            @Html.DisplayFor(model => model.SelectedSettlementName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.EpitmenytipusID)
+            @Html.DisplayName("Építmény típusa")
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.EpitmenytipusID)
+            @Html.DisplayFor(model => model.SelectedBuildingTypeName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.WgsLAT)
+            @Html.DisplayName("Átvitel")
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.WgsLAT)
+            @Html.DisplayFor(model => model.Transmission)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.WgsLON)
+            @Html.DisplayName("Kapacitás")
         </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
 
+        <dt>
+            @Html.DisplayName("Tengerszint feletti magasság")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Altitude)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("WGsLAT")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WGsLAT)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("WgsLON")
+        </dt>
         <dd>
             @Html.DisplayFor(model => model.WgsLON)
         </dd>
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Módosítás", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Módosítás", "Edit", new { id = Model.ID }) |
     @Html.ActionLink("Vissza a listához", "Index")
 </p>
