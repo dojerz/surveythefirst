@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FirstLook.BuildingTypes
+
+<div>
+    <h4>Épület Típus törlése</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayName("Épület Típusa")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Törlés" class="btn btn-default" /> |
+            @Html.ActionLink("Vissza a listához", "Index")
+        </div>
+    }
+</div>
+

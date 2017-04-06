@@ -243,8 +243,11 @@
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BuildingTypesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\SettlementsController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="EntityModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -423,6 +426,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\MGScripts\SurveyScript.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
@@ -466,6 +470,16 @@
     <Content Include="Views\Base\Edit.cshtml" />
     <Content Include="Views\Base\Details.cshtml" />
     <Content Include="Views\Base\Delete.cshtml" />
+    <Content Include="Views\Survey\Index.cshtml" />
+    <Content Include="Views\Base\FilteredBases.cshtml" />
+    <Content Include="Views\Settlements\Index.cshtml" />
+    <Content Include="Views\Settlements\Create.cshtml" />
+    <Content Include="Views\Settlements\Edit.cshtml" />
+    <Content Include="Views\Settlements\Delete.cshtml" />
+    <Content Include="Views\BuildingTypes\Index.cshtml" />
+    <Content Include="Views\BuildingTypes\Create.cshtml" />
+    <Content Include="Views\BuildingTypes\Edit.cshtml" />
+    <Content Include="Views\BuildingTypes\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

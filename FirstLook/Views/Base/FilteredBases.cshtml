@@ -1,0 +1,60 @@
+﻿@model List<FirstLook.Models.Base>
+
+<table>
+    <tr>
+        <th>
+            Megnevezés
+        </th>
+        <th>
+            Település
+        </th>
+        <th>
+            Építmény típusa
+        </th>
+        <th>
+            Átviteli technológia
+        </th>
+        <th>
+            Kapacitás
+        </th>
+        <th>
+            Tengerszint feletti magasság
+        </th>
+        <th>
+            WgsLAT
+        </th>
+        <th>
+            WgsLON
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.SelectedSettlementName
+            </td>
+            <td>
+                @item.SelectedBuildingTypeName
+            </td>
+            <td>
+                @item.Transmission
+            </td>
+            <td>
+                @item.Capacity
+            </td>
+            <td>
+                @item.Altitude
+            </td>
+            <td>
+                @item.WgsLAT
+            </td>
+            <td>
+                @item.WgsLON
+            </td>
+        </tr>
+    }
+</table>
+

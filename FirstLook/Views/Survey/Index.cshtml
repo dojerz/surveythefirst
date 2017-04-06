@@ -1,0 +1,40 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="StartSurvey">
+    <p style="color:brown;font-size:large">Új Felmérés</p>
+    X koordináta: <input id="XCoord" type="text" ><br>
+    Y koordináta: <input id="YCoord" type="text" ><br>
+    Hatókör: <input id="Radius" type="text"><br><br>
+    <button id="SurveyButton" type="button">Felmérés</button> 
+</div>
+<br><br>
+<div>Szóba jöhető bázisok:</div>
+<div id="Bases"></div>
+<br><br>
+<div id="Map">Ide jön majd a térkép</div>
+
+
+@section Scripts
+{
+   <script>
+       jQuery('#SurveyButton').on('click', function (e)
+       {
+            var x = jQuery('#XCoord').val();
+            var y = jQuery('#YCoord').val();
+            var radius = jQuery('#Radius').val();
+            if (x && y && radius)
+            {
+                jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?xCoord=' + x + '&yCoord=' + y + '&radius=' + radius);
+            }
+            else
+            {
+                alert("Nincs megadva adat!");
+            }
+       });
+    </script>
+        
+}
+
+

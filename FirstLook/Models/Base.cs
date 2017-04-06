@@ -15,28 +15,16 @@ namespace FirstLook.Models
         public string Altitude { get; set; }
         public List<SelectListItem> getBuildingTypes { get; set; }
         public List<SelectListItem> getSettlements { get; set; }
-        public string WGsLAT { get; set; }
-        public string WgsLON { get; set; }
+        public string WgsLAT { get; set; }      // Y
+        public string WgsLON { get; set; }      // X
         public int SelectedSettlementID { get; set; }
         public string SelectedSettlementName { get; set; }
         public int SelectedBuildingTypeID { get; set; }
         public string SelectedBuildingTypeName { get; set; }
 
-        public Base( Bases b, List<BuildingTypes> bTypes, List<Settlements> setts)
+        public Base()
         {
-            this.ID = b.ID;
-            this.Name = b.Name;
-            this.Transmission = b.Transmission;
-            this.Capacity = b.Capacity;
-            this.Altitude = b.Altitude;
-            this.WGsLAT = b.WgsLAT;
-            this.WgsLON = b.WgsLON;
-            this.SelectedBuildingTypeID = (int)b.BuildingID;
-            this.SelectedSettlementID = (int)b.SettlementID;
-            getSelectedSettlementName(setts);
-            getSelectedBuildingTypeName(bTypes);
-            getBuildingTypes = getAllBuildingTypes(bTypes);
-            getSettlements = getAllSettlements(setts);
+
         }
 
         public Base(List<BuildingTypes> bTypes, List<Settlements> sett)
@@ -45,21 +33,21 @@ namespace FirstLook.Models
             getSettlements = getAllSettlements(sett);
         }
 
-        public Base( string a, List<SelectListItem> l1, List<SelectListItem> l2, string b, string c, string d, string e, string f)
+        public Base( Bases b, List<BuildingTypes> bTypes, List<Settlements> setts)
         {
-            this.Name = a;
-            getSettlements = l1;
-            getBuildingTypes = l2;
-            Transmission = b;
-            Capacity = c;
-            Altitude = d;
-            WGsLAT = e;
-            WgsLON = f;
-        }
-
-        public Base()
-        {
-
+            this.ID = b.ID;
+            this.Name = b.Name;
+            this.Transmission = b.Transmission;
+            this.Capacity = b.Capacity;
+            this.Altitude = b.Altitude;
+            this.WgsLAT = b.WgsLAT;
+            this.WgsLON = b.WgsLON;
+            this.SelectedBuildingTypeID = (int)b.BuildingID;
+            this.SelectedSettlementID = (int)b.SettlementID;
+            getSelectedSettlementName(setts);
+            getSelectedBuildingTypeName(bTypes);
+            getBuildingTypes = getAllBuildingTypes(bTypes);
+            getSettlements = getAllSettlements(setts);
         }
 
         public Bases createDbBase()
@@ -70,7 +58,7 @@ namespace FirstLook.Models
             b.Transmission = this.Transmission;
             b.Capacity = this.Capacity;
             b.Altitude = this.Altitude;
-            b.WgsLAT = this.WGsLAT;
+            b.WgsLAT = this.WgsLAT;
             b.WgsLON = this.WgsLON;
             b.BuildingID = this.SelectedBuildingTypeID;
             b.SettlementID = this.SelectedSettlementID;
@@ -125,7 +113,7 @@ namespace FirstLook.Models
             return myList;
         }
 
-        public string getSelectedBuildingType()
+        /*public string getSelectedBuildingType()
         {
             string text = getBuildingTypes.Where(x => x.Selected).FirstOrDefault().Text;
             return text;
@@ -147,6 +135,32 @@ namespace FirstLook.Models
         {
             int text = Int32.Parse(getSettlements.Where(x => x.Selected).FirstOrDefault().Value);
             return text;
+        }*/
+
+        public bool amIInsideTheCircle(string placeX, string placeY, string radius)
+        {
+            double x = double.Parse(placeX);
+            double y = double.Parse(placeY);
+            double myX = double.Parse(WgsLON);
+            double myY = double.Parse(WgsLAT);
+            double rad = double.Parse(radius);
+
+            if (x == 0.0 && y == 0.0)
+            {
+                if( (Math.Pow(myX, 2) + Math.Pow(myY, 2)) <= Math.Pow(rad, 2) )
+                {
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                if( (Math.Pow((myX - x), 2) + Math.Pow((myY - y), 2)) <= Math.Pow(rad, 2) )
+                {
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FirstLook.Settlements
+
+<div>
+    <h4>Bázis törlése</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayName("Település neve")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Settlement)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Törlés" class="btn btn-default" /> |
+            @Html.ActionLink("Vissza a listához", "Index")
+        </div>
+    }
+</div>
+
+

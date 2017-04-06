@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<FirstLook.BuildingTypes>
+
+<h1>Épület típusok:</h1>
+@Html.ActionLink("Új hozzáadása", "Create", "BuildingTypes")
+<table>
+    <tr>
+        <th>
+            Épület típusa
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Type
+            </td>
+            <td>
+                @Html.ActionLink("Módosítás", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Törlés", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+</table>

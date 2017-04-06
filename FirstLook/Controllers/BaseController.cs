@@ -29,19 +29,24 @@ namespace FirstLook.Controllers
             return null;
         }
 
-        // GET: Base
-        public ActionResult Index()
+        private List<Base> createBaseList()
         {
             List<Base> bases = new List<Base>();
             var existingBases = bazisok.Bases.ToList();
             var buildingTypes = bazisok.BuildingTypes.ToList();
             var settlements = bazisok.Settlements.ToList();
             var listength = existingBases.Count();
-            for( int i = 0; i < listength; i++ )
+            for (int i = 0; i < listength; i++)
             {
-                bases.Add( new Base(existingBases[i], buildingTypes, settlements) );
+                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
             }
-            //ViewBag.bazisokView = bazisok.Bazis.ToList();
+            return bases;
+        }
+
+        // GET: Base
+        public ActionResult Index()
+        {
+            List<Base> bases = createBaseList();
             return View(bases);
         }
 
@@ -84,15 +89,7 @@ namespace FirstLook.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            List<Base> bases = new List<Base>();
-            var existingBases = bazisok.Bases.ToList();
-            var buildingTypes = bazisok.BuildingTypes.ToList();
-            var settlements = bazisok.Settlements.ToList();
-            var listength = existingBases.Count();
-            for (int i = 0; i < listength; i++)
-            {
-                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
-            }
+            List<Base> bases = createBaseList();
             Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
@@ -123,15 +120,7 @@ namespace FirstLook.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            List<Base> bases = new List<Base>();
-            var existingBases = bazisok.Bases.ToList();
-            var buildingTypes = bazisok.BuildingTypes.ToList();
-            var settlements = bazisok.Settlements.ToList();
-            var listength = existingBases.Count();
-            for (int i = 0; i < listength; i++)
-            {
-                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
-            }
+            List<Base> bases = createBaseList();
             Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
@@ -147,15 +136,7 @@ namespace FirstLook.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            List<Base> bases = new List<Base>();
-            var existingBases = bazisok.Bases.ToList();
-            var buildingTypes = bazisok.BuildingTypes.ToList();
-            var settlements = bazisok.Settlements.ToList();
-            var listength = existingBases.Count();
-            for (int i = 0; i < listength; i++)
-            {
-                bases.Add(new Base(existingBases[i], buildingTypes, settlements));
-            }
+            List<Base> bases = createBaseList();
             Base b = getBaseByID(bazisok.Bases.Find(id).ID, bases);
             if (b == null)
             {
@@ -183,5 +164,24 @@ namespace FirstLook.Controllers
             }
             base.Dispose(disposing);
         }
+
+        // GET: Base/FilteredBases/{Coords}
+        public PartialViewResult FilteredBases( string xCoord, string yCoord, string radius )
+        {
+            List<Base> bases = createBaseList();
+            List<Base> filteredBases = new List<Base>();
+            var listength = bases.Count();
+            for (int i = 0; i < listength; i++)
+            {
+                if(bases[i].amIInsideTheCircle(xCoord, yCoord, radius))
+                {
+                    filteredBases.Add(bases[i]);
+                }
+            }
+
+            return PartialView("~/Views/Base/FilteredBases.cshtml", filteredBases);
+        }
+
+
     }
 }
