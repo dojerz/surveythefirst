@@ -166,16 +166,20 @@ namespace FirstLook.Controllers
         }
 
         // GET: Base/FilteredBases/{Coords}
-        public PartialViewResult FilteredBases( string xCoord, string yCoord, string radius )
+        public PartialViewResult FilteredBases( string init, string xCoord, string yCoord, string radius )
         {
-            List<Base> bases = createBaseList();
             List<Base> filteredBases = new List<Base>();
-            var listength = bases.Count();
-            for (int i = 0; i < listength; i++)
+            int isInit = int.Parse(init);
+            if(isInit == 1)
             {
-                if(bases[i].amIInsideTheCircle(xCoord, yCoord, radius))
+                List<Base> bases = createBaseList();
+                var listength = bases.Count();
+                for (int i = 0; i < listength; i++)
                 {
-                    filteredBases.Add(bases[i]);
+                    if (bases[i].amIInsideTheCircle(xCoord, yCoord, radius))
+                    {
+                        filteredBases.Add(bases[i]);
+                    }
                 }
             }
 

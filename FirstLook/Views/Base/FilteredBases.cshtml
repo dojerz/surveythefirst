@@ -1,6 +1,6 @@
 ﻿@model List<FirstLook.Models.Base>
 
-<table>
+<table id="FilterTable">
     <tr>
         <th>
             Megnevezés
@@ -29,7 +29,7 @@
     </tr>
     @foreach (var item in Model)
     {
-        <tr>
+        <tr class="notSelected" onclick="myFunction(this)">
             <td>
                 @item.Name
             </td>
@@ -57,4 +57,31 @@
         </tr>
     }
 </table>
+
+<script>
+    var selectedRowIndex;
+function myFunction(x) {
+    //alert("Row index is: " + x.rowIndex);
+    if (selectedRowIndex)
+    {
+        if(x.rowIndex == selectedRowIndex)
+        {
+            selectedRowIndex = null;
+            x.style.backgroundColor = "white";
+            x.style.color = "black";
+        }
+        else
+        {
+            selectedRowIndex = x.rowIndex;
+            x.style.backgroundColor = "blue";
+            x.style.color = "white";
+        }
+        return;
+    }
+    selectedRowIndex = x.rowIndex;
+    x.style.backgroundColor = "blue";
+    x.style.color = "white";
+    
+}
+</script>
 

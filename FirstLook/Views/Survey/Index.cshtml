@@ -12,6 +12,8 @@
 <br><br>
 <div>Szóba jöhető bázisok:</div>
 <div id="Bases"></div>
+<button id="GetClosePicturesButton" type="button">Közeli</button>
+<button id="GetFarPicturesButton" type="button">Távoli</button>
 <br><br>
 <div id="Map">Ide jön majd a térkép</div>
 
@@ -19,6 +21,7 @@
 @section Scripts
 {
    <script>
+       jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 0);
        jQuery('#SurveyButton').on('click', function (e)
        {
             var x = jQuery('#XCoord').val();
@@ -26,13 +29,20 @@
             var radius = jQuery('#Radius').val();
             if (x && y && radius)
             {
-                jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?xCoord=' + x + '&yCoord=' + y + '&radius=' + radius);
+                jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 1 + '&xCoord=' + x + '&yCoord=' + y + '&radius=' + radius);
             }
             else
             {
                 alert("Nincs megadva adat!");
             }
        });
+       jQuery('#GetClosePicturesButton').on('click', function (e) {
+           var rows = $('#FilterTable tbody tr.notSelected').length;
+           alert(rows);
+       });
+       var table = jQuery('#FilterTable');
+       var rows = $('#FilterTable tbody tr.notSelected').length;
+       alert(rows);
     </script>
         
 }
