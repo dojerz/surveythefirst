@@ -139,11 +139,11 @@ namespace FirstLook.Models
 
         public bool amIInsideTheCircle(string placeX, string placeY, string radius)
         {
-            double x = double.Parse(placeX);
-            double y = double.Parse(placeY);
-            double myX = double.Parse(WgsLON);
-            double myY = double.Parse(WgsLAT);
-            double rad = double.Parse(radius);
+            float x = float.Parse(placeX);
+            float y = float.Parse(placeY);
+            float myX = float.Parse(WgsLAT);
+            float myY = float.Parse(WgsLON);
+            float rad = float.Parse(radius);
 
             if (x == 0.0 && y == 0.0)
             {

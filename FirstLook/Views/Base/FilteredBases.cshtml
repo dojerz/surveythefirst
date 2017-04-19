@@ -1,87 +1,132 @@
 ﻿@model List<FirstLook.Models.Base>
 
 <table id="FilterTable">
-    <tr>
-        <th>
-            Megnevezés
-        </th>
-        <th>
-            Település
-        </th>
-        <th>
-            Építmény típusa
-        </th>
-        <th>
-            Átviteli technológia
-        </th>
-        <th>
-            Kapacitás
-        </th>
-        <th>
-            Tengerszint feletti magasság
-        </th>
-        <th>
-            WgsLAT
-        </th>
-        <th>
-            WgsLON
-        </th>
-    </tr>
-    @foreach (var item in Model)
-    {
-        <tr class="notSelected" onclick="myFunction(this)">
-            <td>
-                @item.Name
-            </td>
-            <td>
-                @item.SelectedSettlementName
-            </td>
-            <td>
-                @item.SelectedBuildingTypeName
-            </td>
-            <td>
-                @item.Transmission
-            </td>
-            <td>
-                @item.Capacity
-            </td>
-            <td>
-                @item.Altitude
-            </td>
-            <td>
-                @item.WgsLAT
-            </td>
-            <td>
-                @item.WgsLON
-            </td>
+    <thead>
+        <tr>
+            <th>
+                Megnevezés
+            </th>
+            <th>
+                Település
+            </th>
+            <th>
+                Építmény típusa
+            </th>
+            <th>
+                Átviteli technológia
+            </th>
+            <th>
+                Kapacitás
+            </th>
+            <th>
+                Tengerszint feletti magasság
+            </th>
+            <th>
+                WgsLAT
+            </th>
+            <th>
+                WgsLON
+            </th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="@item.ID" class="unSelected" onclick="selectFunction(this)">
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.SelectedSettlementName
+                </td>
+                <td>
+                    @item.SelectedBuildingTypeName
+                </td>
+                <td>
+                    @item.Transmission
+                </td>
+                <td>
+                    @item.Capacity
+                </td>
+                <td>
+                    @item.Altitude
+                </td>
+                <td>
+                    @item.WgsLAT
+                </td>
+                <td>
+                    @item.WgsLON
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 <script>
+
+    /*var WgsLATCellIndexInTableRow = 6;
+    var WgsLONCellIndexInTableRow = 7;
+
     var selectedRowIndex;
-function myFunction(x) {
-    //alert("Row index is: " + x.rowIndex);
-    if (selectedRowIndex)
+    var rows = document.getElementById("FilterTable").rows;
+    function selectFunction(x)
     {
-        if(x.rowIndex == selectedRowIndex)
+            if (selectedRowIndex)
+            {
+                if(x.rowIndex == selectedRowIndex)
+                {
+                    selectedRowIndex = null;
+                    changeRowSelection(x, false);
+                }
+                else
+                {
+                    changeRowSelection(rows[selectedRowIndex], false);
+                    selectedRowIndex = x.rowIndex;
+                    changeRowSelection(x, true);
+                }
+                drawElementsOnMap();
+                return;
+            }
+            selectedRowIndex = x.rowIndex;
+            changeRowSelection(x, true);
+            drawElementsOnMap();
+    }
+
+    function changeRowSelection(rowObject, setSelected)
+    {
+        if(setSelected)
         {
-            selectedRowIndex = null;
-            x.style.backgroundColor = "white";
-            x.style.color = "black";
+            rowObject.className = "selected";
         }
         else
         {
-            selectedRowIndex = x.rowIndex;
-            x.style.backgroundColor = "blue";
-            x.style.color = "white";
+            rowObject.className = "unSelected";
         }
-        return;
     }
-    selectedRowIndex = x.rowIndex;
-    x.style.backgroundColor = "blue";
-    x.style.color = "white";
-    
-}
+
+    function getSelectedBaseID()
+    {
+        return rows[selectedRowIndex].getAttribute("id");
+    }
+
+    function getUnSelectedBasesCoords()
+    {
+        var usRows = $('#FilterTable tbody tr.unSelected');
+        var listLength = usRows.length;
+        var coords = [];
+
+        for (var i = 0; i < listLength; i++)
+        {
+            coords.push([usRows[i].cells[WgsLATCellIndexInTableRow].innerHTML.replace(",", "."), usRows[i].cells[WgsLONCellIndexInTableRow].innerHTML.replace(",", ".")]);
+        }
+        return coords;
+    }
+
+    function getSelectedBaseCoords()
+    {
+        var sRows = $('#FilterTable tbody tr.selected');
+        return [sRows[0].cells[WgsLATCellIndexInTableRow].innerHTML.replace(",", "."), sRows[0].cells[WgsLONCellIndexInTableRow].innerHTML.replace(",", ".")];
+    }*/
+
 </script>
 

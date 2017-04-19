@@ -349,6 +349,10 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\rTower.png" />
+    <Content Include="Content\Images\rTower3.png" />
+    <Content Include="Content\Images\rTower4.png" />
+    <Content Include="Content\Survey.css" />
     <Content Include="EntityModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>EntityModel.edmx</DependentUpon>

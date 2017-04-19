@@ -4,24 +4,256 @@
 
 <div id="StartSurvey">
     <p style="color:brown;font-size:large">Új Felmérés</p>
-    X koordináta: <input id="XCoord" type="text" ><br>
-    Y koordináta: <input id="YCoord" type="text" ><br>
-    Hatókör: <input id="Radius" type="text"><br><br>
-    <button id="SurveyButton" type="button">Felmérés</button> 
+    Hatósugár: <input id="Radius" type="text">
+    <div id="SearchArea">
+        <div id="SearchAddress">
+            <p style="color:brown;font-size:large">Cím szerint:</p>
+            <input id="Address" type="text">
+            <button id="AddressButton" type="button">Keresés</button>
+        </div>
+        <div id="SearchCoords">
+            <p style="color:brown;font-size:large">Koordináta szerint:</p>
+            X koordináta: <input id="XCoord" type="text"><br>
+            Y koordináta: <input id="YCoord" type="text"><br>
+            <!--<button id="SurveyButton" type="button">Felmérés</button>-->
+        </div>
+    </div>
 </div>
 <br><br>
-<div>Szóba jöhető bázisok:</div>
-<div id="Bases"></div>
-<button id="GetClosePicturesButton" type="button">Közeli</button>
-<button id="GetFarPicturesButton" type="button">Távoli</button>
-<br><br>
-<div id="Map">Ide jön majd a térkép</div>
+<div style="color:#cc0099;font-weight: bold;">Szóba jöhető bázisok:</div>
+<div id="AboveMap" style="padding-bottom:5px">
+    <div id="Bases"></div>
+    <div id="Actions">
+        <p style="float:right">Bázisképek megtekintése</p>
+        <button style="float:right" id="GetClosePicturesButton" type="button">Közeli</button>
+        <button style="float:right" id="GetFarPicturesButton" type="button">Távoli</button>
+        <br>
+        <button style=" background-color:darkgreen; color:white; position: absolute; bottom: 0; right: 0;" id="SaveButton" type="button">Felmérés mentése</button>
+    </div>
+</div>
+<div id="Map" style="height:400px; width:100%"></div>
 
 
 @section Scripts
 {
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link href="@Url.Content("~/Content/Survey.css")" rel="stylesheet" type="text/css" />
+
    <script>
+
+       var WgsLATCellIndexInTableRow = 6;
+       var WgsLONCellIndexInTableRow = 7;
+       var selectedRowIndex;
+       var rows;
+
+       var inputX;
+       var inputY;
+       var radius;
+
+       function probe()
+       {
+           var id = 5;
+           var rIndex = $('#FilterTable tbody tr[id =' + id + ']');
+           if (rIndex.length > 0)
+           {
+               alert(rIndex[0].rowIndex);
+           }
+       }
+
+       $(document).ready(function ()
+       {
+
+           inputX = jQuery('#XCoord');
+           inputY = jQuery('#YCoord');
+           radius = jQuery('#Radius');
+           inputX.on('input', function (e) {
+               getInput();
+           });
+           inputY.on('input', function (e) {
+               getInput();
+           });
+           radius.on('input', function (e) {
+               getInput();
+           });
+
+       });
+
+       function getInput()
+       {
+           var x = inputX.val().replace(".", ",");
+           var y = inputY.val().replace(".", ",");
+           var r = radius.val().replace(".", ",");
+
+           if ((x.length > 1) && (y.length > 1) && (r.length > 0))
+           {
+
+               jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 1 + '&xCoord=' + x + '&yCoord=' + y + '&radius=' + r, filteredBasesTableIsReady);
+           }
+       }
+
+       function filteredBasesTableIsReady()
+       {
+           probe();
+           rows = document.getElementById("FilterTable").rows;
+           selectedRowIndex = null;
+           drawElementsOnMap();
+       }
+
+       //
+       // filteredBasesTable functions
+       //
+
+       function selectFunction(x)
+       {
+           if (selectedRowIndex)
+           {
+               if (x.rowIndex == selectedRowIndex)
+               {
+                   selectedRowIndex = null;
+                   changeRowSelection(x, false);
+               }
+               else
+               {
+                   changeRowSelection(rows[selectedRowIndex], false);
+                   selectedRowIndex = x.rowIndex;
+                   changeRowSelection(x, true);
+               }
+               drawElementsOnMap();
+               return;
+           }
+           selectedRowIndex = x.rowIndex;
+           changeRowSelection(x, true);
+           drawElementsOnMap();
+       }
+
+       function changeRowSelection(rowObject, setSelected)
+       {
+           if (setSelected)
+           {
+               rowObject.className = "selected";
+           }
+           else
+           {
+               rowObject.className = "unSelected";
+           }
+       }
+
+       function getSelectedBaseID()
+       {
+           return rows[selectedRowIndex].getAttribute("id");
+       }
+
+       function getUnSelectedBasesCoords()
+       {
+           var usRows = $('#FilterTable tbody tr.unSelected');
+           var listLength = usRows.length;
+           var coords = [];
+
+           for (var i = 0; i < listLength; i++)
+           {
+               coords.push([usRows[i].cells[WgsLATCellIndexInTableRow].innerHTML.replace(",", "."), usRows[i].cells[WgsLONCellIndexInTableRow].innerHTML.replace(",", ".")]);
+           }
+           return coords;
+       }
+
+       function getSelectedBaseCoords()
+       {
+           var sRows = $('#FilterTable tbody tr.selected');
+           return [sRows[0].cells[WgsLATCellIndexInTableRow].innerHTML.replace(",", "."), sRows[0].cells[WgsLONCellIndexInTableRow].innerHTML.replace(",", ".")];
+       }
+
+       //
+       //
+       //
+
+       var baseIcons = new Array();
+       function drawElementsOnMap()
+       {
+           
+           var x = inputX.val();
+           var y = inputY.val();
+
+           var xxx = getUnSelectedBasesCoords();
+           if (baseIcons.length > 0)
+           {
+               for (var i = 0; i < baseIcons.length; i++)
+               {
+                   map.removeLayer(baseIcons[i]);
+               }
+               baseIcons = new Array();
+           }
+           for (var i = 0; i < xxx.length; i++)
+           {
+               baseIcons.push(new L.marker(xxx[i], { icon: towerIconUnselected }));
+           }
+           if (selectedRowIndex)
+           {
+               var yyy = getSelectedBaseCoords()
+               baseIcons.push(new L.marker(yyy, { icon: towerIconSelected }));
+           }
+           for (var i = 0; i < baseIcons.length; i++)
+           {
+               map.addLayer(baseIcons[i]);
+           }
+           drawSurveyMarker(x, y);
+       }
+
+       function drawSurveyMarker(x, y)
+       {
+           if (surveyMarker)
+           {
+               map.removeLayer(surveyMarker);
+               map.removeLayer(circle);
+           }
+           surveyMarker = new L.marker([x, y], { draggable: true });
+           map.addLayer(surveyMarker);
+           drawCircle(x, y, 5000);
+           surveyMarker.on('drag', function (e) {
+               map.removeLayer(circle);
+               drawCircle(this.getLatLng().lat, this.getLatLng().lng, 5000);
+           });
+           surveyMarker.on('dragend', function (e) {
+               inputX.val(this.getLatLng().lat);
+               inputY.val(this.getLatLng().lng);
+               getInput();
+           });
+       }
+
+       function drawCircle(x, y, radius) {
+           circle = L.circle([x, y], radius, {
+               color: '#e6ccff',
+               fillColor: '#e6ccff',
+               fillOpacity: 0.5
+           });
+           map.addLayer(circle);
+       }
+
+
+       var towerIconUrlUnselected = '@Url.Content("~/Content/Images/rTower4.png")';
+       var towerIconUrlSelected = '@Url.Content("~/Content/Images/rTower3.png")';
+
+       var centerOnInitLat = 47.501;
+       var centerOnInitLon = 19.053;
+       var zoomLevOnInit = 8;
+
+       var surveyMarker;
+       var circle;
+
+       var map = L.map('Map').setView([centerOnInitLat, centerOnInitLon], zoomLevOnInit);
+       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+           maxZoom: 18,
+           attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+               '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+               'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+           id: 'mapbox.streets'
+       }).addTo(map);
+
+       //drawSurveyMarker(centerOnInitLat, centerOnInitLon);
+
        jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 0);
+
        jQuery('#SurveyButton').on('click', function (e)
        {
             var x = jQuery('#XCoord').val();
@@ -37,12 +269,59 @@
             }
        });
        jQuery('#GetClosePicturesButton').on('click', function (e) {
-           var rows = $('#FilterTable tbody tr.notSelected').length;
-           alert(rows);
+           //var rows = $('#FilterTable tbody tr.notSelected').length;
+           //alert("Közeli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
+           var xxx = getUnSelectedBasesCoords();
+           var yyy = getSelectedBaseCoords();
+           alert(xxx.length); //alert(yyy[0]);
+           for (var i = 0; i < xxx.length; i++)
+           {
+               new L.marker(xxx[i], { icon: towerIconUnselected }).addTo(map).bindPopup("<b>Bázis</b><br />").openPopup();
+           }
+           new L.marker(yyy, { icon: towerIconSelected }).addTo(map).bindPopup("<b>Bázis</b><br />").openPopup();
+       });
+       jQuery('#GetFarPicturesButton').on('click', function (e) {
+           alert("Távoli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
        });
        var table = jQuery('#FilterTable');
        var rows = $('#FilterTable tbody tr.notSelected').length;
-       alert(rows);
+       //alert(rows);
+
+       /*var centerOnInitLat = 47.501;
+       var centerOnInitLon = 19.053;*/
+
+       var fixBazisLat = 47.372;
+       var fixBazisLon = 19.0777;
+
+
+       //var zoomLevOnInit = 8;
+
+       //var map = L.map('Map').setView([centerOnInitLat, centerOnInitLon], zoomLevOnInit);
+       /*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+           maxZoom: 18,
+           attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+               '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+               'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+           id: 'mapbox.streets'
+       }).addTo(map);*/
+
+       var towerIconUnselected = L.icon({
+           iconUrl: towerIconUrlUnselected,
+           iconSize: [32, 32], // size of the icon
+           iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+           popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+       });
+
+       var towerIconSelected = L.icon({
+           iconUrl: towerIconUrlSelected,
+           iconSize: [32, 32], // size of the icon
+           iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+           popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+       });
+
+       /*L.marker([fixBazisLat, fixBazisLon], { icon: towerIconUnselected }).addTo(map).bindPopup("<b>Bázis</b><br />").openPopup();
+       var popup = L.popup();*/
+
     </script>
         
 }
