@@ -162,5 +162,32 @@ namespace FirstLook.Models
                 return false;
             }
         }
+
+        public bool amIInsideTheRadius(string surveyX, string surveyY, string surveyRadius)
+        {
+            float x = float.Parse(surveyX);
+            float y = float.Parse(surveyY);
+            float myX = float.Parse(WgsLAT);
+            float myY = float.Parse(WgsLON);
+            float radius = float.Parse(surveyRadius)*1000;
+
+            // calculate distance between 2 points (surveyPoint and basePoint) by Haversine
+
+            float r = 6371000; // radius of Earth
+            float latRadS = (float)(x * Math.PI / 180);
+            float latRadB = (float)(myX * Math.PI / 180);
+            float lonRadS = (float)(y * Math.PI / 180);
+            float lonRadB = (float)(myY * Math.PI / 180);
+            float latTag = (float)(1 - Math.Cos(latRadB - latRadS)) / 2;
+            float lonTag = (float)(1 - Math.Cos(lonRadB - lonRadS)) / 2;
+
+            float distance = (float)(2 * r * Math.Asin( Math.Sqrt(latTag + Math.Cos(latRadS)*Math.Cos(latRadB)*lonTag) ));
+
+            if(distance <= radius)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

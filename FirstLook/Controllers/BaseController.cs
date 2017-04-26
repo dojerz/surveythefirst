@@ -176,7 +176,7 @@ namespace FirstLook.Controllers
                 var listength = bases.Count();
                 for (int i = 0; i < listength; i++)
                 {
-                    if (bases[i].amIInsideTheCircle(xCoord, yCoord, radius))
+                    if (bases[i].amIInsideTheRadius(xCoord, yCoord, radius))
                     {
                         filteredBases.Add(bases[i]);
                     }

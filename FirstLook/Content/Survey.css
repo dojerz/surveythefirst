@@ -85,6 +85,8 @@
 
 #SearchCoords
 {
+    position: relative;
+    right: 600px;
     float:right;
     /*border-style: solid;
     border-color:red;*/
