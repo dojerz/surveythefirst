@@ -32,6 +32,7 @@ namespace FirstLook
         public string Connection { get; set; }
         public string Note { get; set; }
         public Nullable<System.DateTime> Date { get; set; }
+        public string BaseID { get; set; }
     
         public virtual BuildingTypes BuildingTypes { get; set; }
         public virtual Settlements Settlements { get; set; }

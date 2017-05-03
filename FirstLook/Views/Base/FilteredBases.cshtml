@@ -19,20 +19,20 @@
                 Kapacitás
             </th>
             <th>
-                Tengerszint feletti magasság
+                Tengerszint feletti magasság (m)
             </th>
             <th>
-                WgsLAT
+                Távolság (km)
             </th>
             <th>
-                WgsLON
+                Irányszög
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id="@item.ID" class="unSelected" onclick="selectFunction(this)">
+            <tr id="@item.ID" baseID="@item.BaseID" lat="@item.WgsLAT" lon="@item.WgsLON" class="unSelected" onclick="bases.baseTableEvent(this)">
                 <td>
                     @item.Name
                 </td>
@@ -52,10 +52,9 @@
                     @item.Altitude
                 </td>
                 <td>
-                    @item.WgsLAT
+                    @item.distanceFromSurveyPoint
                 </td>
                 <td>
-                    @item.WgsLON
                 </td>
             </tr>
         }

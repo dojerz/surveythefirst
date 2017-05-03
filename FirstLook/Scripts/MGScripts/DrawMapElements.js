@@ -28,10 +28,10 @@ var towerIconSelected;
 
 // draw functions
 
-var surveyMarker;
+/*var surveyMarker;
 var baseIcons;
 var circle;
-var surveyLine;
+var surveyLine;*/
 
 function drawElementsOnMap() {
 
@@ -49,8 +49,12 @@ function drawElementsOnMap() {
     }
     for (var i = 0; i < usBCoords.length; i++)
     {
-        baseIcons.push(new L.marker(usBCoords[i], { icon: towerIconUnselected }));
+        baseIcons.push(new L.marker(usBCoords[i], { icon: towerIconUnselected, baseID: i }).on('click', clickOnBaseEvent));
     }
+    /*for (var i = 0; i < baseIcons.length; i++)
+    {
+        alert(baseIcons[i].options.baseID);
+    }*/
     if (selectedRowIndex)
     {
         var sBCoords = getSelectedBaseCoords();
@@ -64,6 +68,20 @@ function drawElementsOnMap() {
     drawSurveyLine(lat, lon);
     getAngle(lat, lon);
 }
+
+/*function clickOnBaseEvent()
+{
+    alert("click");
+    var iconName = this.options.icon;
+    if( iconName == towerIconUnselected )
+    {
+        this.options.icon = towerIconSelected;
+    }
+    else
+    {
+        this.options.icon = towerIconUnselected;
+    }
+}*/
 
 function drawSurveyMarker(lat, lon, r)
 {
@@ -130,9 +148,10 @@ function initDrawElements()
     });
 }
 
-function getAngle(surveyLat, surveyLon)
+function getAngle(surveyLat, surveyLon, baseLat, baseLon)
 {
-    if (selectedRowIndex)
+    return calcAngle(surveyLat, surveyLon, baseLat, baseLon);
+    /*if (selectedRowIndex)
     {
         var sBCoords = getSelectedBaseCoords();
         var angle = calcAngle(surveyLat, surveyLon, sBCoords[0], sBCoords[1]);
@@ -141,12 +160,16 @@ function getAngle(surveyLat, surveyLon)
     else
     {
         jQuery('#MapAngle').val("-");
-    }
+    }*/
 }
 
 function calcAngle(sLat, sLon, baseLat, baseLon) {
     var basePoint = L.latLng(baseLat, baseLon);
     var surveyPoint = L.latLng(sLat, sLon);
     var angle = L.GeometryUtil.bearing(basePoint, surveyPoint);
+    if (angle < 0)
+    {
+        angle = 360 + angle;
+    }
     return angle;
 }

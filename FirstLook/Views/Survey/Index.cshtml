@@ -48,9 +48,14 @@
     <script src="~/Scripts/MGScripts/UserActions.js"></script>
     <script src="~/Scripts/MGScripts/FilteredBasesTable.js"></script>
     <script src="~/Scripts/MGScripts/leaflet.geometryutil.js"></script>
+    <script src="~/Scripts/MGScripts/Base.js"></script>
+    <script src="~/Scripts/MGScripts/SurveyMarker.js"></script>
     <link href="@Url.Content("~/Content/Survey.css")" rel="stylesheet" type="text/css" />
 
    <script>
+
+       var bases = new BaseController();
+       var surveyMarker = new SurveyMarker();
 
        initTablevalues();
 
@@ -64,6 +69,8 @@
 
        function getInput()
        {
+           surveyMarker.setCoordsWGS(getLatForClient(), getLonForClient());
+           surveyMarker.setRadius(getRadiusForClient());
            var lat = getLatForServer();
            var lon = getLonForServer();
            var r = getRadiusForServer();
@@ -73,10 +80,14 @@
        }
 
        function filteredBasesTableIsReady() {
-           //probe();
            rows = document.getElementById("FilterTable").rows;
-           refreshTableSelection();
-           drawElementsOnMap();
+           dataRows = $('#FilterTable tbody tr');
+           fillAngleInTable(getLatForClient(), getLonForClient(), dataRows, 7);
+           bases.initBases(dataRows, map);
+           surveyMarker.drawMarker(map);
+           //setBasesByTableRows(dataRows, 7);
+           //refreshTableSelection();
+           //drawElementsOnMap();
        }
 
        var towerIconUrlUnselected = '@Url.Content("~/Content/Images/rTower4.png")';

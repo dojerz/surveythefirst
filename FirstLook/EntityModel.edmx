@@ -4,12 +4,13 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="BaseModels.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="BaseModels.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Bases">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="BaseID" Type="nvarchar" MaxLength="50" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
           <Property Name="BuildingID" Type="int" />
           <Property Name="Transmission" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -83,8 +84,7 @@
             <End Role="Bases" EntitySet="Bases" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BaseModels" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -112,6 +112,7 @@
           <Property Name="Date" Type="DateTime" Precision="0" />
           <NavigationProperty Name="BuildingTypes" Relationship="Self.FK_dbo_Bases_dbo_BuildingType_Id" FromRole="Bases" ToRole="BuildingTypes" />
           <NavigationProperty Name="Settlements" Relationship="Self.FK_dbo_Bases_dbo_Settlement_Id" FromRole="Bases" ToRole="Settlements" />
+          <Property Name="BaseID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="BuildingTypes">
           <Key>
@@ -179,6 +180,7 @@
           <EntitySetMapping Name="Bases">
             <EntityTypeMapping TypeName="BaseModels.Bases">
               <MappingFragment StoreEntitySet="Bases">
+                <ScalarProperty Name="BaseID" ColumnName="BaseID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="BuildingID" ColumnName="BuildingID" />

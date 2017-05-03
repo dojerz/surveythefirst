@@ -1,0 +1,37 @@
+CREATE TABLE [dbo].[BuildingTypes] (
+    [ID]   INT            NOT NULL,
+    [Type] NVARCHAR (MAX) NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+CREATE TABLE [dbo].[Settlements] (
+    [ID]         INT            NOT NULL,
+    [Settlement] NVARCHAR (MAX) NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
+CREATE TABLE [dbo].[Bases] (
+    [ID]           INT            NOT NULL,
+    [BaseID]       NVARCHAR (50)  NULL,
+    [Name]         NVARCHAR (MAX) NOT NULL,
+    [BuildingID]   INT            NULL,
+    [Transmission] NVARCHAR (50)  NOT NULL,
+    [Technology]   NVARCHAR (50)  NULL,
+    [Capacity]     NVARCHAR (50)  NOT NULL,
+    [Altitude]     NVARCHAR (50)  NOT NULL,
+    [WgsLAT]       NVARCHAR (50)  NOT NULL,
+    [WgsLON]       NVARCHAR (50)  NOT NULL,
+    [EOVX]         NVARCHAR (50)  NULL,
+    [EOVY]         NVARCHAR (50)  NULL,
+    [SettlementID] INT            NULL,
+    [Address]      NVARCHAR (50)  NULL,
+    [ZipCode]      NVARCHAR (50)  NULL,
+    [Owner]        NVARCHAR (MAX) NULL,
+    [Connection]   NVARCHAR (MAX) NULL,
+    [Note]         NVARCHAR (MAX) NULL,
+    [Date]         DATE           NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC),
+    CONSTRAINT [FK_dbo.Bases_dbo.BuildingType_Id] FOREIGN KEY ([BuildingID]) REFERENCES [dbo].[BuildingTypes] ([ID]) ON DELETE CASCADE,
+    CONSTRAINT [FK_dbo.Bases_dbo.Settlement_Id] FOREIGN KEY ([SettlementID]) REFERENCES [dbo].[Settlements] ([ID]) ON DELETE CASCADE
+);

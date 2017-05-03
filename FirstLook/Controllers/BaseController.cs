@@ -173,8 +173,8 @@ namespace FirstLook.Controllers
             if(isInit == 1)
             {
                 List<Base> bases = createBaseList();
-                var listength = bases.Count();
-                for (int i = 0; i < listength; i++)
+                var listLength = bases.Count();
+                for (int i = 0; i < listLength; i++)
                 {
                     if (bases[i].amIInsideTheRadius(xCoord, yCoord, radius))
                     {
@@ -182,8 +182,15 @@ namespace FirstLook.Controllers
                     }
                 }
             }
+            filteredBases = sortBasesByDistance(filteredBases);
 
             return PartialView("~/Views/Base/FilteredBases.cshtml", filteredBases);
+        }
+
+        private List<Base> sortBasesByDistance(List<Base> bases)
+        {
+            List<Base> sortedBases = bases.OrderBy(b=>b.distanceFromSurveyPoint).ToList();
+            return sortedBases;
         }
 
 

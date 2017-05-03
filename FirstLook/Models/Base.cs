@@ -21,6 +21,8 @@ namespace FirstLook.Models
         public string SelectedSettlementName { get; set; }
         public int SelectedBuildingTypeID { get; set; }
         public string SelectedBuildingTypeName { get; set; }
+        public float distanceFromSurveyPoint { get; set; }
+        public string BaseID { get; set; }
 
         public Base()
         {
@@ -36,6 +38,7 @@ namespace FirstLook.Models
         public Base( Bases b, List<BuildingTypes> bTypes, List<Settlements> setts)
         {
             this.ID = b.ID;
+            BaseID = b.BaseID;
             this.Name = b.Name;
             this.Transmission = b.Transmission;
             this.Capacity = b.Capacity;
@@ -54,6 +57,7 @@ namespace FirstLook.Models
         {
             Bases b = new Bases();
             b.ID = this.ID;
+            b.BaseID = BaseID;
             b.Name = this.Name;
             b.Transmission = this.Transmission;
             b.Capacity = this.Capacity;
@@ -165,11 +169,23 @@ namespace FirstLook.Models
 
         public bool amIInsideTheRadius(string surveyX, string surveyY, string surveyRadius)
         {
+            float radius = float.Parse(surveyRadius)*1000;
+
+            float distance = getDistanceFromSurveyPoint(surveyX, surveyY);
+            if (distance <= radius)
+            {
+                distanceFromSurveyPoint = (float)Math.Round( (Decimal)(distance / 1000), 3, MidpointRounding.AwayFromZero);    // in km
+                return true;
+            }
+            return false;
+        }
+
+        private float getDistanceFromSurveyPoint(string surveyX, string surveyY)
+        {
             float x = float.Parse(surveyX);
             float y = float.Parse(surveyY);
             float myX = float.Parse(WgsLAT);
             float myY = float.Parse(WgsLON);
-            float radius = float.Parse(surveyRadius)*1000;
 
             // calculate distance between 2 points (surveyPoint and basePoint) by Haversine
 
@@ -181,13 +197,8 @@ namespace FirstLook.Models
             float latTag = (float)(1 - Math.Cos(latRadB - latRadS)) / 2;
             float lonTag = (float)(1 - Math.Cos(lonRadB - lonRadS)) / 2;
 
-            float distance = (float)(2 * r * Math.Asin( Math.Sqrt(latTag + Math.Cos(latRadS)*Math.Cos(latRadB)*lonTag) ));
-
-            if(distance <= radius)
-            {
-                return true;
-            }
-            return false;
+            float distance = (float)(2 * r * Math.Asin(Math.Sqrt(latTag + Math.Cos(latRadS) * Math.Cos(latRadB) * lonTag)));
+            return distance;
         }
     }
 }
