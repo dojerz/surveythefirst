@@ -28,10 +28,29 @@ $(document).ready(function () {
         geoCoding(getAddress());
     });
     getClosePicturesButton.on('click', function (e) {
-        alert("Közeli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
+        //alert("Közeli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
+        var baseID = bases.getSelectedBaseID();
+        if (baseID)
+        {
+            var options = {
+                url: 'data-original'
+            };
+            var $images = $('#' + baseID + '.near');
+            alert($images.length);
+            $images.viewer();
+            alert(3);
+        }
+        else
+        {
+            alert("Nincs kijelölve bázis!");
+        }
+        /*var options = {
+            url: 'data-original'
+        };
+        $('.docs-pictures').on({}).viewer(options);*/
     });
     getFarPicturesButton.on('click', function (e) {
-        alert("Távoli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
+        //alert("Távoli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
     });
 
 });

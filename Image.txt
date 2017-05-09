@@ -1,0 +1,2 @@
+Fokonyvtar->image fileok
+projektben References-> add reference

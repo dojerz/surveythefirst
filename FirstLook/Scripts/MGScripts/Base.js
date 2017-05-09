@@ -175,4 +175,10 @@ function BaseController()
             }
         }
     }
+
+    this.getSelectedBaseID =
+    function()
+    {
+        return selectedBaseID;
+    }
 }

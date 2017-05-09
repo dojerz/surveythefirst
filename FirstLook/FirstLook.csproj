@@ -285,6 +285,7 @@
     <Compile Include="Models\Base.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Photo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settlements.cs">
       <DependentUpon>EntityModel.tt</DependentUpon>
@@ -353,6 +354,16 @@
     <Content Include="Content\Images\rTower3.png" />
     <Content Include="Content\Images\rTower4.png" />
     <Content Include="Content\Survey.css" />
+    <Content Include="Content\viewer.css" />
+    <Content Include="Content\ViewerImages\ui-bg_gloss-wave_30_3d3644_500x100.png" />
+    <Content Include="Content\ViewerImages\ui-bg_highlight-soft_100_dcd9de_1x100.png" />
+    <Content Include="Content\ViewerImages\ui-bg_highlight-soft_100_eae6ea_1x100.png" />
+    <Content Include="Content\ViewerImages\ui-bg_highlight-soft_25_30273a_1x100.png" />
+    <Content Include="Content\ViewerImages\ui-bg_highlight-soft_45_5f5964_1x100.png" />
+    <Content Include="Content\ViewerImages\ui-icons_454545_256x240.png" />
+    <Content Include="Content\ViewerImages\ui-icons_a8a3ae_256x240.png" />
+    <Content Include="Content\ViewerImages\ui-icons_ebccce_256x240.png" />
+    <Content Include="Content\ViewerImages\ui-icons_ffffff_256x240.png" />
     <Content Include="EntityModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>EntityModel.edmx</DependentUpon>
@@ -442,6 +453,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\viewer.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -493,7 +505,12 @@
     <Content Include="Views\BuildingTypes\Edit.cshtml" />
     <Content Include="Views\BuildingTypes\Delete.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ImageHandler\ImageHandler.csproj">
+      <Project>{f6b2439e-3288-4dff-8d06-0aba2f1772c8}</Project>
+      <Name>ImageHandler</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />

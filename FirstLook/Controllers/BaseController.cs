@@ -14,6 +14,7 @@ namespace FirstLook.Controllers
         private BazisokEntities4 bazisok = new BazisokEntities4();
         //private List<Base> bases = new List<Base>();
         //private BazisokEntities bazisok = new BazisokEntities();
+        ImageHandler.Manage imageManager = new ImageHandler.Manage();
 
         private Base getBaseByID(int ID, List<Base> bases)
         {
@@ -170,15 +171,39 @@ namespace FirstLook.Controllers
         {
             List<Base> filteredBases = new List<Base>();
             int isInit = int.Parse(init);
-            if(isInit == 1)
+            List<string> files;
+            if (isInit == 1)
             {
                 List<Base> bases = createBaseList();
                 var listLength = bases.Count();
-                for (int i = 0; i < listLength; i++)
+                for (int b = 0; b < listLength; b++)
                 {
-                    if (bases[i].amIInsideTheRadius(xCoord, yCoord, radius))
+                    if (bases[b].amIInsideTheRadius(xCoord, yCoord, radius))
                     {
-                        filteredBases.Add(bases[i]);
+                        filteredBases.Add(bases[b]);
+                        string baseID = filteredBases[filteredBases.Count() - 1].BaseID;
+                        files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\").OrderBy(p => p).ToList();
+                        foreach (var file in files)
+                        {
+                            string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                            string[] parts = Name.Split('_');
+                            int viewRange = int.Parse(parts[2]);
+                            int angle = int.Parse(parts[3]);
+                            Photo photo = new Photo();
+                            photo.Name = Name;
+                            photo.BaseID = baseID;
+                            photo.ViewRange = viewRange;
+                            photo.Angle = angle;
+                            photo.ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
+                            if(viewRange == 0)
+                            {
+                                filteredBases[filteredBases.Count() - 1].NearPictures.Add(photo);
+                            }
+                            else
+                            {
+                                filteredBases[filteredBases.Count() - 1].FarPictures.Add(photo);
+                            }
+                        }
                     }
                 }
             }
@@ -191,6 +216,14 @@ namespace FirstLook.Controllers
         {
             List<Base> sortedBases = bases.OrderBy(b=>b.distanceFromSurveyPoint).ToList();
             return sortedBases;
+        }
+
+        public ActionResult GetOriginalPicture(string baseID, string name)
+        {
+            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\").ToList();
+            string picPath = files.Where(i => System.IO.Path.GetFileNameWithoutExtension(i) == name).FirstOrDefault();
+            byte[] imageByteData = System.IO.File.ReadAllBytes(picPath);
+            return File(imageByteData, "image/jpg");
         }
 
 

@@ -24,6 +24,9 @@ namespace FirstLook.Models
         public float distanceFromSurveyPoint { get; set; }
         public string BaseID { get; set; }
 
+        public List<Photo> NearPictures = new List<Photo>();
+        public List<Photo> FarPictures = new List<Photo>();
+
         public Base()
         {
 
