@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Net;
 using System.Data.Entity;
 using FirstLook.Models;
+using System.IO;
 
 namespace FirstLook.Controllers
 {
@@ -171,7 +172,9 @@ namespace FirstLook.Controllers
         {
             List<Base> filteredBases = new List<Base>();
             int isInit = int.Parse(init);
-            List<string> files;
+            List<string> filesBase;
+            List<string> filesNear;
+            List<string> filesFar;
             if (isInit == 1)
             {
                 List<Base> bases = createBaseList();
@@ -182,27 +185,94 @@ namespace FirstLook.Controllers
                     {
                         filteredBases.Add(bases[b]);
                         string baseID = filteredBases[filteredBases.Count() - 1].BaseID;
-                        files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\").OrderBy(p => p).ToList();
-                        foreach (var file in files)
+                        try
                         {
-                            string Name = System.IO.Path.GetFileNameWithoutExtension(file);
-                            string[] parts = Name.Split('_');
-                            int viewRange = int.Parse(parts[2]);
-                            int angle = int.Parse(parts[3]);
-                            Photo photo = new Photo();
-                            photo.Name = Name;
-                            photo.BaseID = baseID;
-                            photo.ViewRange = viewRange;
-                            photo.Angle = angle;
-                            photo.ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
-                            if(viewRange == 0)
+                            filesBase = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Base\").ToList();
+                            filesNear = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Near\").ToList();
+                            filesFar = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Far\").ToList();
+
+                            foreach (var file in filesBase)
                             {
-                                filteredBases[filteredBases.Count() - 1].NearPictures.Add(photo);
+                                string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                                string[] parts = Name.Split('_');
+                                Photo photo = new Photo();
+                                photo.Name = Name;
+                                photo.BaseID = baseID;
+                                photo.Number = int.Parse(parts[2]);
+                                bool inserted = false;
+                                int lLength = filteredBases[filteredBases.Count() - 1].BasePictures.Count();
+                                for (int i = 0; i < lLength; i++)
+                                {
+                                    if (filteredBases[filteredBases.Count() - 1].BasePictures[i].Number > photo.Number)
+                                    {
+                                        filteredBases[filteredBases.Count() - 1].BasePictures.Insert(i, photo);
+                                        inserted = true;
+                                        break;
+                                    }
+                                }
+                                if (!inserted)
+                                {
+                                    filteredBases[filteredBases.Count() - 1].BasePictures.Add(photo);
+                                }
                             }
-                            else
+                            foreach (var file in filesNear)
                             {
-                                filteredBases[filteredBases.Count() - 1].FarPictures.Add(photo);
+                                string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                                string[] parts = Name.Split('_');
+                                Photo photo = new Photo();
+                                photo.Name = Name;
+                                photo.BaseID = baseID;
+                                int viewRange = int.Parse(parts[2]);
+                                int angle = int.Parse(parts[3]);
+                                photo.ViewRange = viewRange;
+                                photo.Angle = angle;
+                                bool inserted = false;
+                                int lLength = filteredBases[filteredBases.Count() - 1].NearPictures.Count();
+                                for (int i = 0; i < lLength; i++)
+                                {
+                                    if (filteredBases[filteredBases.Count() - 1].NearPictures[i].Angle > photo.Angle)
+                                    {
+                                        filteredBases[filteredBases.Count() - 1].NearPictures.Insert(i, photo);
+                                        inserted = true;
+                                        break;
+                                    }
+                                }
+                                if (!inserted)
+                                {
+                                    filteredBases[filteredBases.Count() - 1].NearPictures.Add(photo);
+                                }
                             }
+                            foreach (var file in filesFar)
+                            {
+                                string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                                string[] parts = Name.Split('_');
+                                Photo photo = new Photo();
+                                photo.Name = Name;
+                                photo.BaseID = baseID;
+                                int viewRange = int.Parse(parts[2]);
+                                int angle = int.Parse(parts[3]);
+                                photo.ViewRange = viewRange;
+                                photo.Angle = angle;
+                                bool inserted = false;
+                                int lLength = filteredBases[filteredBases.Count() - 1].FarPictures.Count();
+                                for (int i = 0; i < lLength; i++)
+                                {
+                                    if (filteredBases[filteredBases.Count() - 1].FarPictures[i].Angle > photo.Angle)
+                                    {
+                                        filteredBases[filteredBases.Count() - 1].FarPictures.Insert(i, photo);
+                                        inserted = true;
+                                        break;
+                                    }
+                                }
+                                if (!inserted)
+                                {
+                                    filteredBases[filteredBases.Count() - 1].FarPictures.Add(photo);
+                                }
+                            }
+                        }
+                        catch (DirectoryNotFoundException dirEx)
+                        {
+                            Console.WriteLine("Directory not found: " + dirEx.Message);
                         }
                     }
                 }
@@ -218,9 +288,9 @@ namespace FirstLook.Controllers
             return sortedBases;
         }
 
-        public ActionResult GetOriginalPicture(string baseID, string name)
+        public ActionResult GetOriginalPicture(string baseID, string name, string folder)
         {
-            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\").ToList();
+            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\" + folder + @"\").ToList();
             string picPath = files.Where(i => System.IO.Path.GetFileNameWithoutExtension(i) == name).FirstOrDefault();
             byte[] imageByteData = System.IO.File.ReadAllBytes(picPath);
             return File(imageByteData, "image/jpg");

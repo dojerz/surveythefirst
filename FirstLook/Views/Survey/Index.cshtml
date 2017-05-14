@@ -25,8 +25,9 @@
     <div id="Bases"></div>
     <div id="Actions">
         <p style="float:right">Bázisképek megtekintése</p>
-        <button style="float:right" id="GetClosePicturesButton" type="button">Közeli</button>
-        <button style="float:right" id="GetFarPicturesButton" type="button">Távoli</button>
+        <button style="float:right" id="GetNearPicturesButton" type="button" class="disabledButton">Közeli</button>
+        <button style="float:right" id="GetFarPicturesButton" type="button" class="disabledButton">Távoli</button>
+        <button style="float:right" id="GetBasePicturesButton" type="button" class="disabledButton">Bázis</button>
         <br><br><br>
         <div style="float:right; width:70%">
             Irányszög: <input type="text" id="MapAngle">
@@ -87,9 +88,6 @@
            fillAngleInTable(getLatForClient(), getLonForClient(), dataRows, 7);
            bases.initBases(dataRows, map);
            surveyMarker.drawMarker(map);
-           //setBasesByTableRows(dataRows, 7);
-           //refreshTableSelection();
-           //drawElementsOnMap();
        }
 
        var towerIconUrlUnselected = '@Url.Content("~/Content/Images/rTower4.png")';

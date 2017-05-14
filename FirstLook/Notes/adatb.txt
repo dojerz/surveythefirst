@@ -35,3 +35,10 @@ CREATE TABLE [dbo].[Bases] (
     CONSTRAINT [FK_dbo.Bases_dbo.BuildingType_Id] FOREIGN KEY ([BuildingID]) REFERENCES [dbo].[BuildingTypes] ([ID]) ON DELETE CASCADE,
     CONSTRAINT [FK_dbo.Bases_dbo.Settlement_Id] FOREIGN KEY ([SettlementID]) REFERENCES [dbo].[Settlements] ([ID]) ON DELETE CASCADE
 );
+
+MuPa_1		Mûvészetek Palotája		optika	100		8		47,4694465	19,071697
+Praktiker	Praktiker				kábel	200		7		47,4700512	19,0825311
+Grupi_1		Groupama Aréna			optika	200		10		47,4754906	19,0952709
+Vasarcs		Nagy Vásárcsarnok		kábel	300		10		47,4870853	19,0584925
+Erkelsz		Erkel Színház			kábel	200		6		47,4971093	19,0765974
+Orszaghaz	Országház				optika	100		10		47,5071207	19,0456688

@@ -12,8 +12,12 @@ $(document).ready(function () {
     surveyAddress.val("");
 
     addressButton = jQuery('#AddressButton');
-    getClosePicturesButton = jQuery('#GetClosePicturesButton');
+    getBasePicturesButton = jQuery('#GetBasePicturesButton');
+    getNearPicturesButton = jQuery('#GetNearPicturesButton');
     getFarPicturesButton = jQuery('#GetFarPicturesButton');
+    getBasePicturesButton.prop("disabled", true);
+    getNearPicturesButton.prop("disabled", true);
+    getFarPicturesButton.prop("disabled", true);
 
     surveyLat.on('input', function (e) {
         getInput();
@@ -27,33 +31,139 @@ $(document).ready(function () {
     addressButton.on('click', function (e) {
         geoCoding(getAddress());
     });
-    getClosePicturesButton.on('click', function (e) {
-        //alert("Közeli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
-        var baseID = bases.getSelectedBaseID();
-        if (baseID)
-        {
-            var options = {
-                url: 'data-original'
-            };
-            var $images = $('#' + baseID + '.near');
-            alert($images.length);
-            $images.viewer();
-            alert(3);
-        }
-        else
-        {
-            alert("Nincs kijelölve bázis!");
-        }
-        /*var options = {
-            url: 'data-original'
-        };
-        $('.docs-pictures').on({}).viewer(options);*/
+    getNearPicturesButton.on('click', function (e) {
+        getPhotos(1);
     });
     getFarPicturesButton.on('click', function (e) {
-        //alert("Távoli képek a " + getSelectedBaseID() + " azonosítóval rendelkező bázisról.");
+        getPhotos(2);
+    });
+    getBasePicturesButton.on('click', function (e) {
+        getPhotos(0);
     });
 
 });
+
+function checkPhotos()
+{
+    var baseID = bases.getSelectedBaseID();
+    if (baseID)
+    {
+        if ($('#' + baseID + '.base' + ' li' + ' img').length > 0)
+        {
+            getBasePicturesButton.prop("disabled", false);
+            getBasePicturesButton.removeClass().addClass("enabledButton");
+        }
+        else
+        {
+            getBasePicturesButton.prop("disabled", true);
+            getBasePicturesButton.removeClass().addClass("disabledButton");
+        }
+        if ($('#' + baseID + '.near' + ' li' + ' img').length > 0)
+        {
+            getNearPicturesButton.prop("disabled", false);
+            getNearPicturesButton.removeClass().addClass("enabledButton");
+        }
+        else
+        {
+            getNearPicturesButton.prop("disabled", true);
+            getNearPicturesButton.removeClass().addClass("disabledButton");
+        }
+        if ($('#' + baseID + '.far' + ' li' + ' img').length > 0)
+        {
+            getFarPicturesButton.prop("disabled", false);
+            getFarPicturesButton.removeClass().addClass("enabledButton");
+        }
+        else
+        {
+            getFarPicturesButton.prop("disabled", true);
+            getFarPicturesButton.removeClass().addClass("disabledButton");
+        }
+    }
+    else
+    {
+        getBasePicturesButton.prop("disabled", true);
+        getBasePicturesButton.removeClass().addClass("disabledButton");
+        getNearPicturesButton.prop("disabled", true);
+        getNearPicturesButton.removeClass().addClass("disabledButton");
+        getFarPicturesButton.prop("disabled", true);
+        getFarPicturesButton.removeClass().addClass("disabledButton");
+    }
+}
+
+function getPhotos(type)
+{
+    var baseID = bases.getSelectedBaseID();
+    if (baseID)
+    {
+        var angle;
+        var imageContainer;
+        var images;
+        var index;
+        if (type == 0)
+        {
+            imageContainer = $('#' + baseID + '.base');
+            index = 0;
+        }
+        else if (type == 1)
+        {
+            angle = bases.getSelectedBaseAngle();
+            imageContainer = $('#' + baseID + '.near');
+            images = $('#' + baseID + '.near' + ' li' + ' img');
+            index = getNearestPhotoIndex(images, angle);
+        }
+        else
+        {
+            angle = bases.getSelectedBaseAngle();
+            imageContainer = $('#' + baseID + '.far');
+            images = $('#' + baseID + '.far' + ' li' + ' img');
+            index = getNearestPhotoIndex(images, angle);
+        }
+
+        imageContainer.viewer(
+        {
+            shown: function () {
+                $(this).viewer('view', index);
+            }
+        }).viewer('show');
+    }
+    else
+    {
+        alert("Nincs kijelölve bázis!");
+    }
+
+    function getNearestPhotoIndex(images, angleB)
+    {
+        var angle = Number(angleB);
+        var listLength = images.length;
+        var nearestValue;
+        var index;
+        var value;
+        var x;
+        for(var i = 0; i < listLength; i++)
+        {
+            value = Number(images[i].getAttribute("angle").replace(",", "."));
+            x = Math.abs(angle - value);
+            if (x > 180)
+            {
+                x = 360 - x;
+            }
+            if( nearestValue )
+            {
+                if (nearestValue > x)
+                {
+                    nearestValue = x;
+                    index = i;
+                }
+            }
+            else
+            {
+                nearestValue = x;
+                index = i;
+            }
+        }
+        return index;
+    }
+}
 
 function geoCoding(addr)
 {

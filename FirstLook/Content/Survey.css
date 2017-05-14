@@ -107,4 +107,14 @@
     width:1000px;
 }
 
+.disabledButton
+{
+    background-color: #ffb3b3;
+}
+
+.enabledButton
+{
+    background-color: #ccffcc;
+}
+
 

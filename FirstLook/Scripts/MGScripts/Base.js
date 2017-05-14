@@ -150,6 +150,7 @@ function BaseController()
         Map.addLayer(BaseIcons[i]);
         BaseIcons[i].bindPopup("<b>Bázis</b><br />");
         surveyMarker.drawSurvey(Map);
+        checkPhotos();
     }
 
     function clickOnBaseEvent()
@@ -180,5 +181,18 @@ function BaseController()
     function()
     {
         return selectedBaseID;
+    }
+
+    this.getSelectedBaseAngle =
+    function()
+    {
+        if (selectedBaseID)
+        {
+            var selectedBase = getBaseByBaseID(selectedBaseID);
+            if (selectedBase)
+            {
+                return selectedBase.Angle;
+            }
+        }
     }
 }

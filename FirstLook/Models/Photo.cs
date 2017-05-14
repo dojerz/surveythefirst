@@ -11,6 +11,7 @@ namespace FirstLook.Models
         public string BaseID { get; set; }
         public int ViewRange { get; set; }
         public int Angle { get; set; }
-        public byte[] ThumbNailContent { get; set; }
+        public int Number { get; set; }
+        //public byte[] ThumbNailContent { get; set; }
     }
 }

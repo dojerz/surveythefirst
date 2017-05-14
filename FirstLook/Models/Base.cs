@@ -9,21 +9,22 @@ namespace FirstLook.Models
     public class Base
     {
         public int ID { get; set; }
+        public string BaseID { get; set; }
         public string Name { get; set; }
         public string Transmission { get; set; }
         public string Capacity { get; set; }
         public string Altitude { get; set; }
         public List<SelectListItem> getBuildingTypes { get; set; }
         public List<SelectListItem> getSettlements { get; set; }
-        public string WgsLAT { get; set; }      // Y
-        public string WgsLON { get; set; }      // X
+        public string WgsLAT { get; set; }      // x
+        public string WgsLON { get; set; }      // y
         public int SelectedSettlementID { get; set; }
         public string SelectedSettlementName { get; set; }
         public int SelectedBuildingTypeID { get; set; }
         public string SelectedBuildingTypeName { get; set; }
         public float distanceFromSurveyPoint { get; set; }
-        public string BaseID { get; set; }
 
+        public List<Photo> BasePictures = new List<Photo>();
         public List<Photo> NearPictures = new List<Photo>();
         public List<Photo> FarPictures = new List<Photo>();
 
@@ -119,30 +120,6 @@ namespace FirstLook.Models
             }
             return myList;
         }
-
-        /*public string getSelectedBuildingType()
-        {
-            string text = getBuildingTypes.Where(x => x.Selected).FirstOrDefault().Text;
-            return text;
-        }
-
-        public int getSelectedBuildingValue()
-        {
-            int text = Int32.Parse(getBuildingTypes.Where(x => x.Selected).FirstOrDefault().Value);
-            return text;
-        }
-
-        public string getSelectedSettlement()
-        {
-            string text = getSettlements.Where(x => x.Selected).FirstOrDefault().Text;
-            return text;
-        }
-
-        public int getSelectedSettlementValue()
-        {
-            int text = Int32.Parse(getSettlements.Where(x => x.Selected).FirstOrDefault().Value);
-            return text;
-        }*/
 
         public bool amIInsideTheCircle(string placeX, string placeY, string radius)
         {
