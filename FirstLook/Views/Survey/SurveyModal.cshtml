@@ -1,0 +1,98 @@
+﻿@model FirstLook.Models.Survey
+
+{
+    ViewBag.Title = "SurveyPartial";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Új felmérés</h4>
+        </div>
+        @using (Ajax.BeginForm("Save", "Survey", FormMethod.Post,
+                    new AjaxOptions
+                    {
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "POST",
+                        OnSuccess = "onAjaxSuccess"
+                    }))
+        {
+            <div class="modal-body">
+                <div class="form-group col-xs-12 smallmargin">
+                    <div class="row">
+                        &nbsp;
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Ügyfél név</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Telephely cím</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.SiteAddress, new { htmlAttributes = new { @Value = Html.ValueFor(m => m.SiteAddress), @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.SiteAddress, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Kapacitás</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.Capacity, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Capacity, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Szolgáltatás</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.Service, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Service, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Megjegyzes</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-12">Presales</label>
+                    </div>
+                    <div class="row">
+                        @Html.EditorFor(model => model.Presales, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Presales, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Állapot", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(m => m.SelectedStateID, new SelectList(Model.getSurveyStates, "Value", "Text", 0))
+                            @Html.ValidationMessageFor(model => model.SelectedStateID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="modal-footer modbg">
+                    <button class="btn btn-inverse" type="submit">Save</button>
+                </div>
+        }
+    </div>
+</div>
+
+<script>
+function onAjaxSuccess(data, status, xhr) {
+    if (data.error) {
+        $.notify({
+            type: "error",
+            text: data.message
+        });
+    }
+    else {
+        $('.modal').modal('hide');
+    }
+}
+</script>
+
+

@@ -10,6 +10,9 @@
         <EntityTypeShape EntityType="BaseModels.Settlements" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="BaseModels.FK_dbo_Bases_dbo_BuildingType_Id" ManuallyRouted="false" />
         <AssociationConnector Association="BaseModels.FK_dbo_Bases_dbo_Settlement_Id" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="BaseModels.Surveys" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="BaseModels.SurveyStates" Width="1.5" PointX="5.375" PointY="4.75" />
+        <AssociationConnector Association="BaseModels.FK_dbo_Bases_dbo_SurveyState_Id" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<FirstLook.Models.Survey>
+
+<h1>Felmérések:</h1>
+<table>
+    <tr>
+        <th>
+            Ügyfél név
+        </th>
+        <th>
+            Telephely cím
+        </th>
+        <th>
+            Kapacitás
+        </th>
+        <th>
+            Szolgáltatás
+        </th>
+        <th>
+            Megjegyzés
+        </th>
+        <th>
+            Presales
+        </th>
+        <th>
+            Állapot
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.CustomerName
+            </td>
+            <td>
+                @item.SiteAddress
+            </td>
+            <td>
+                @item.Capacity
+            </td>
+            <td>
+                @item.Service
+            </td>
+            <td>
+                @item.Note
+            </td>
+            <td>
+                @item.Presales
+            </td>
+            <td>
+                @item.SelectedState
+            </td>
+        </tr>
+    }
+</table>
+
+
+

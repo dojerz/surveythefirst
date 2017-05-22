@@ -12,6 +12,7 @@ namespace FirstLook.Models
         public int ViewRange { get; set; }
         public int Angle { get; set; }
         public int Number { get; set; }
-        //public byte[] ThumbNailContent { get; set; }
+        public string Folder { get; set; }
+        public byte[] Mini { get; set; }
     }
 }

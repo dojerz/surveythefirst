@@ -23,6 +23,7 @@
 <div style="color:#cc0099;font-weight: bold;">Szóba jöhető bázisok:</div>
 <div id="AboveMap" style="padding-bottom:5px">
     <div id="Bases"></div>
+    <div id="Photos"></div>
     <div id="Actions">
         <p style="float:right">Bázisképek megtekintése</p>
         <button style="float:right" id="GetNearPicturesButton" type="button" class="disabledButton">Közeli</button>
@@ -36,6 +37,10 @@
     </div>
 </div>
 <div id="Map" style="height:400px; width:100%"></div>
+<div class="modal fade" id="Modal" role="dialog">
+    <div id="SurveyContainer">
+    </div>
+</div>
 
 
 @section Scripts
@@ -82,6 +87,37 @@
            }
        }
 
+       function getPhotos(range)
+       {
+
+           var baseID = bases.getSelectedBaseID();
+           if (baseID)
+           {
+               jQuery('#Photos').load('@Url.Action("GetBasePhotos", "Base")?baseID=' + baseID + '&range=' + range, openViewer);
+           }
+
+           function openViewer()
+           {
+               imageContainer = $('.Gallery');
+               /*images = $('#' + baseID + '.near' + ' li' + ' img');
+               images = $('.Gallery' + ' ul' + ' li' + ' img');
+               alert(images.length);*/
+               index = 0;//getNearestPhotoIndex(images, angle);
+               //alert(1);
+               imageContainer.viewer(
+               {
+                    url: 'data-original',
+                    shown: function () {
+                        $(this).viewer('view', index);
+                    },
+                    hidden: function (e) {
+                        $(this).viewer('destroy');
+                    }
+               }).viewer('show');
+               //alert(2);
+           }
+       }
+
        function filteredBasesTableIsReady() {
            rows = document.getElementById("FilterTable").rows;
            dataRows = $('#FilterTable tbody tr');
@@ -95,6 +131,17 @@
        initDrawElements();
 
        jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 0);
+
+       $("#SaveButton").on('click', function (e) {
+           var url = "/Survey/Save";
+           var siteAddress = surveyAddress.val();
+           $.get(url + "?siteAddress=" + siteAddress, function (data) {
+               $('#SurveyContainer').html(data);
+               $('#Modal').modal();
+           });
+            
+
+       });
 
     </script>
         

@@ -43,6 +43,26 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="Settlement" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="Surveys">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="CustomerName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SiteAddress" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Capacity" Type="int" Nullable="false" />
+          <Property Name="Service" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="Presales" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SurveyStateID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SurveyStates">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="State" Type="nvarchar(max)" />
+        </EntityType>
         <Association Name="FK_dbo_Bases_dbo_BuildingType_Id">
           <End Role="BuildingTypes" Type="Self.BuildingTypes" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -71,10 +91,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_dbo_Bases_dbo_SurveyState_Id">
+          <End Role="SurveyStates" Type="Self.SurveyStates" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Surveys" Type="Self.Surveys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SurveyStates">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Surveys">
+              <PropertyRef Name="SurveyStateID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="BaseModelsStoreContainer">
           <EntitySet Name="Bases" EntityType="Self.Bases" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BuildingTypes" EntityType="Self.BuildingTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Settlements" EntityType="Self.Settlements" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Surveys" EntityType="Self.Surveys" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SurveyStates" EntityType="Self.SurveyStates" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_dbo_Bases_dbo_BuildingType_Id" Association="Self.FK_dbo_Bases_dbo_BuildingType_Id">
             <End Role="BuildingTypes" EntitySet="BuildingTypes" />
             <End Role="Bases" EntitySet="Bases" />
@@ -82,6 +118,10 @@
           <AssociationSet Name="FK_dbo_Bases_dbo_Settlement_Id" Association="Self.FK_dbo_Bases_dbo_Settlement_Id">
             <End Role="Settlements" EntitySet="Settlements" />
             <End Role="Bases" EntitySet="Bases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Bases_dbo_SurveyState_Id" Association="Self.FK_dbo_Bases_dbo_SurveyState_Id">
+            <End Role="SurveyStates" EntitySet="SurveyStates" />
+            <End Role="Surveys" EntitySet="Surveys" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -170,7 +210,49 @@
             <End Role="Settlements" EntitySet="Settlements" />
             <End Role="Bases" EntitySet="Bases" />
           </AssociationSet>
+          <EntitySet Name="Surveys" EntityType="BaseModels.Surveys" />
+          <EntitySet Name="SurveyStates" EntityType="BaseModels.SurveyStates" />
+          <AssociationSet Name="FK_dbo_Bases_dbo_SurveyState_Id" Association="BaseModels.FK_dbo_Bases_dbo_SurveyState_Id">
+            <End Role="SurveyStates" EntitySet="SurveyStates" />
+            <End Role="Surveys" EntitySet="Surveys" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Surveys">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SiteAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Capacity" Type="Int32" Nullable="false" />
+          <Property Name="Service" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Presales" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SurveyStateID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="SurveyStates" Relationship="BaseModels.FK_dbo_Bases_dbo_SurveyState_Id" FromRole="Surveys" ToRole="SurveyStates" />
+        </EntityType>
+        <EntityType Name="SurveyStates">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Surveys" Relationship="BaseModels.FK_dbo_Bases_dbo_SurveyState_Id" FromRole="SurveyStates" ToRole="Surveys" />
+        </EntityType>
+        <Association Name="FK_dbo_Bases_dbo_SurveyState_Id">
+          <End Type="BaseModels.SurveyStates" Role="SurveyStates" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BaseModels.Surveys" Role="Surveys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SurveyStates">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Surveys">
+              <PropertyRef Name="SurveyStateID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -215,6 +297,28 @@
               <MappingFragment StoreEntitySet="Settlements">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Settlement" ColumnName="Settlement" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Surveys">
+            <EntityTypeMapping TypeName="BaseModels.Surveys">
+              <MappingFragment StoreEntitySet="Surveys">
+                <ScalarProperty Name="SurveyStateID" ColumnName="SurveyStateID" />
+                <ScalarProperty Name="Presales" ColumnName="Presales" />
+                <ScalarProperty Name="Service" ColumnName="Service" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="SiteAddress" ColumnName="SiteAddress" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyStates">
+            <EntityTypeMapping TypeName="BaseModels.SurveyStates">
+              <MappingFragment StoreEntitySet="SurveyStates">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

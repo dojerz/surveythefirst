@@ -28,5 +28,7 @@ namespace FirstLook
         public virtual DbSet<Bases> Bases { get; set; }
         public virtual DbSet<BuildingTypes> BuildingTypes { get; set; }
         public virtual DbSet<Settlements> Settlements { get; set; }
+        public virtual DbSet<Surveys> Surveys { get; set; }
+        public virtual DbSet<SurveyStates> SurveyStates { get; set; }
     }
 }

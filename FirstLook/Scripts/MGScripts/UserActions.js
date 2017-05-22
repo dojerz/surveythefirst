@@ -8,16 +8,16 @@ $(document).ready(function () {
 
     surveyLat.val("");
     surveyLon.val("");
-    surveyRadius.val("");
+    surveyRadius.val(3);
     surveyAddress.val("");
 
     addressButton = jQuery('#AddressButton');
     getBasePicturesButton = jQuery('#GetBasePicturesButton');
     getNearPicturesButton = jQuery('#GetNearPicturesButton');
     getFarPicturesButton = jQuery('#GetFarPicturesButton');
-    getBasePicturesButton.prop("disabled", true);
-    getNearPicturesButton.prop("disabled", true);
-    getFarPicturesButton.prop("disabled", true);
+    //getBasePicturesButton.prop("disabled", true);
+    //getNearPicturesButton.prop("disabled", true);
+    //getFarPicturesButton.prop("disabled", true);
 
     surveyLat.on('input', function (e) {
         getInput();
@@ -32,18 +32,21 @@ $(document).ready(function () {
         geoCoding(getAddress());
     });
     getNearPicturesButton.on('click', function (e) {
-        getPhotos(1);
+        //getPhotos(1);
+        getPhotos('k');
     });
     getFarPicturesButton.on('click', function (e) {
-        getPhotos(2);
+        //getPhotos(2);
+        getPhotos('t');
     });
     getBasePicturesButton.on('click', function (e) {
-        getPhotos(0);
+        //getPhotos(0);
+        getPhotos('b');
     });
 
 });
 
-function checkPhotos()
+/*function checkPhotos()
 {
     var baseID = bases.getSelectedBaseID();
     if (baseID)
@@ -88,9 +91,9 @@ function checkPhotos()
         getFarPicturesButton.prop("disabled", true);
         getFarPicturesButton.removeClass().addClass("disabledButton");
     }
-}
+}*/
 
-function getPhotos(type)
+/*function getPhotos(type)
 {
     var baseID = bases.getSelectedBaseID();
     if (baseID)
@@ -121,8 +124,12 @@ function getPhotos(type)
 
         imageContainer.viewer(
         {
+            url: 'data-original',
             shown: function () {
                 $(this).viewer('view', index);
+            },
+            hidden: function (e) {
+                $(this).viewer('destroy');
             }
         }).viewer('show');
     }
@@ -163,7 +170,7 @@ function getPhotos(type)
         }
         return index;
     }
-}
+}*/
 
 function geoCoding(addr)
 {

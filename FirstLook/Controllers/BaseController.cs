@@ -172,9 +172,9 @@ namespace FirstLook.Controllers
         {
             List<Base> filteredBases = new List<Base>();
             int isInit = int.Parse(init);
-            List<string> filesBase;
+            /*List<string> filesBase;
             List<string> filesNear;
-            List<string> filesFar;
+            List<string> filesFar;*/
             if (isInit == 1)
             {
                 List<Base> bases = createBaseList();
@@ -184,7 +184,7 @@ namespace FirstLook.Controllers
                     if (bases[b].amIInsideTheRadius(xCoord, yCoord, radius))
                     {
                         filteredBases.Add(bases[b]);
-                        string baseID = filteredBases[filteredBases.Count() - 1].BaseID;
+                        /*string baseID = filteredBases[filteredBases.Count() - 1].BaseID;
                         try
                         {
                             filesBase = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Base\").ToList();
@@ -199,6 +199,7 @@ namespace FirstLook.Controllers
                                 photo.Name = Name;
                                 photo.BaseID = baseID;
                                 photo.Number = int.Parse(parts[2]);
+                                photo.ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
                                 bool inserted = false;
                                 int lLength = filteredBases[filteredBases.Count() - 1].BasePictures.Count();
                                 for (int i = 0; i < lLength; i++)
@@ -222,10 +223,21 @@ namespace FirstLook.Controllers
                                 Photo photo = new Photo();
                                 photo.Name = Name;
                                 photo.BaseID = baseID;
-                                int viewRange = int.Parse(parts[2]);
+                                string a = parts[2];
+                                int viewRange;
+                                if(a == "k")
+                                {
+                                    viewRange = 0;
+                                }
+                                else
+                                {
+                                    viewRange = 1;
+                                }
+                                //int viewRange = int.Parse(parts[2]);
                                 int angle = int.Parse(parts[3]);
                                 photo.ViewRange = viewRange;
                                 photo.Angle = angle;
+                                photo.ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
                                 bool inserted = false;
                                 int lLength = filteredBases[filteredBases.Count() - 1].NearPictures.Count();
                                 for (int i = 0; i < lLength; i++)
@@ -249,10 +261,21 @@ namespace FirstLook.Controllers
                                 Photo photo = new Photo();
                                 photo.Name = Name;
                                 photo.BaseID = baseID;
-                                int viewRange = int.Parse(parts[2]);
+                                string a = parts[2];
+                                int viewRange;
+                                if (a == "t")
+                                {
+                                    viewRange = 0;
+                                }
+                                else
+                                {
+                                    viewRange = 1;
+                                }
+                                //int viewRange = int.Parse(parts[2]);
                                 int angle = int.Parse(parts[3]);
                                 photo.ViewRange = viewRange;
                                 photo.Angle = angle;
+                                photo.ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
                                 bool inserted = false;
                                 int lLength = filteredBases[filteredBases.Count() - 1].FarPictures.Count();
                                 for (int i = 0; i < lLength; i++)
@@ -273,13 +296,113 @@ namespace FirstLook.Controllers
                         catch (DirectoryNotFoundException dirEx)
                         {
                             Console.WriteLine("Directory not found: " + dirEx.Message);
-                        }
+                        }*/
                     }
                 }
             }
             filteredBases = sortBasesByDistance(filteredBases);
+            //CreateMiniPhotos();
 
             return PartialView("~/Views/Base/FilteredBases.cshtml", filteredBases);
+        }
+
+        // GET: Base/GetBasePhotos/...
+        public PartialViewResult GetBasePhotos(string baseID, string range)
+        {
+            List<Photo> photos = new List<Photo>();
+            List<string> miniFiles;
+            List<string> originalFiles;
+            string folder;
+            if (range == "b")
+            {
+                folder = "Base";
+                originalFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Original\Base\").ToList();
+                miniFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Mini\Base\").ToList();
+                foreach (var file in originalFiles)
+                {
+                    string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                    string[] parts = Name.Split('_');
+                    Photo photo = new Photo();
+                    photo.Folder = folder;
+                    photo.Name = Name;
+                    photo.BaseID = baseID;
+                    photo.Number = int.Parse(parts[2]);
+                    foreach (var mFile in miniFiles)
+                    {
+                        string mName = System.IO.Path.GetFileNameWithoutExtension(mFile);
+                        if(mName == Name)
+                        {
+                            photo.Mini = System.IO.File.ReadAllBytes(mFile);
+                        }
+                    }
+                    bool inserted = false;
+                    int lLength = photos.Count();
+                    for (int i = 0; i < lLength; i++)
+                    {
+                        if (photos[i].Number > photo.Number)
+                        {
+                            photos.Insert(i, photo);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted)
+                    {
+                        photos.Add(photo);
+                    }
+                }
+            }
+            else if(range == "k" || range == "t")
+            {
+                if(range == "k")
+                {
+                    folder = "Near";
+                    miniFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Mini\Near\").ToList();
+                    originalFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Original\Near\").ToList();
+                }
+                else
+                {
+                    folder = "Far";
+                    miniFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Mini\Far\").ToList();
+                    originalFiles = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Original\Far\").ToList();
+                }
+                
+                foreach (var file in originalFiles)
+                {
+                    string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                    string[] parts = Name.Split('_');
+                    Photo photo = new Photo();
+                    photo.Folder = folder;
+                    photo.Name = Name;
+                    photo.BaseID = baseID;
+                    int angle = int.Parse(parts[3]);
+                    photo.Angle = angle;
+                    foreach (var mFile in miniFiles)
+                    {
+                        string mName = System.IO.Path.GetFileNameWithoutExtension(mFile);
+                        if (mName == Name)
+                        {
+                            photo.Mini = System.IO.File.ReadAllBytes(mFile);
+                        }
+                    }
+                    bool inserted = false;
+                    int lLength = photos.Count();
+                    for (int i = 0; i < lLength; i++)
+                    {
+                        if (photos[i].Angle > photo.Angle)
+                        {
+                            photos.Insert(i, photo);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted)
+                    {
+                        photos.Add(photo);
+                    }
+                }
+            }
+            return PartialView("~/Views/Base/BasePhotos.cshtml", photos);
         }
 
         private List<Base> sortBasesByDistance(List<Base> bases)
@@ -288,12 +411,25 @@ namespace FirstLook.Controllers
             return sortedBases;
         }
 
-        public ActionResult GetOriginalPicture(string baseID, string name, string folder)
+        public ActionResult GetOriginalPhoto(string baseID, string name, string folder)
         {
-            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\" + folder + @"\").ToList();
-            string picPath = files.Where(i => System.IO.Path.GetFileNameWithoutExtension(i) == name).FirstOrDefault();
-            byte[] imageByteData = System.IO.File.ReadAllBytes(picPath);
+            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\" + baseID + @"\Original\" + folder + @"\").ToList();
+            string phPath = files.Where(i => System.IO.Path.GetFileNameWithoutExtension(i) == name).FirstOrDefault();
+            byte[] imageByteData = System.IO.File.ReadAllBytes(phPath);
             return File(imageByteData, "image/jpg");
+        }
+
+        public void CreateMiniPhotos()
+        {
+            List<string> files = System.IO.Directory.GetFiles(@"C:\Users\Dani\Desktop\TestImages\Prater_1\Original\Far\").ToList();
+            foreach (var file in files)
+            {
+                string Name = System.IO.Path.GetFileNameWithoutExtension(file);
+                byte[] ThumbNailContent = imageManager.GetSmallImage(System.IO.File.ReadAllBytes(file), 140, 50);
+                //var base64 = Convert.ToBase64String(ThumbNailContent);
+                //var imgSrc = String.Format("data:image/jpeg;base64,{0}", base64);
+                System.IO.File.WriteAllBytes(@"C:\Users\Dani\Desktop\TestImages\Prater_1\Mini\Far\" + Name + ".jpg", ThumbNailContent);
+            }
         }
 
 

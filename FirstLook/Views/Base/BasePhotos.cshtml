@@ -1,0 +1,16 @@
+﻿@model List<FirstLook.Models.Photo>
+
+<div class="Gallery" style="display:none">
+        <ul>
+            @foreach (var item in Model)
+            {
+                var base64 = Convert.ToBase64String(item.Mini);
+                var imgSrc = String.Format("data:image/jpeg;base64,{0}", base64);
+                <li>
+                    <img src=@imgSrc data-original="@Url.Action("GetOriginalPhoto", "Base", new { baseID = item.BaseID ,name = item.Name, folder = item.Folder })">
+                </li>
+            }
+        </ul>
+</div>
+
+
