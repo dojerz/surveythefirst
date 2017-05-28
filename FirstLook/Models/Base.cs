@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -28,6 +29,16 @@ namespace FirstLook.Models
         public List<Photo> NearPictures = new List<Photo>();
         public List<Photo> FarPictures = new List<Photo>();
 
+        public int NumberOfBasePhotos { get; set; }
+        public int NumberOfNearPhotos { get; set; }
+        public int NumberOfFarPhotos { get; set; }
+        public string PathForMiniBasePhotos { get; set; }
+        public string PathForMiniNearPhotos { get; set; }
+        public string PathForMiniFarPhotos { get; set; }
+        public string PathForOriginalBasePhotos { get; set; }
+        public string PathForOriginalNearPhotos { get; set; }
+        public string PathForOriginalFarPhotos { get; set; }
+
         public Base()
         {
 
@@ -55,6 +66,41 @@ namespace FirstLook.Models
             getSelectedBuildingTypeName(bTypes);
             getBuildingTypes = getAllBuildingTypes(bTypes);
             getSettlements = getAllSettlements(setts);
+            setPhotosAttributes();
+        }
+
+        private void setPhotosAttributes()
+        {
+            PathForMiniBasePhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Mini\Base\";
+            PathForMiniNearPhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Mini\Near\";
+            PathForMiniFarPhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Mini\Far\";
+            PathForOriginalBasePhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Original\Base\";
+            PathForOriginalNearPhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Original\Near\";
+            PathForOriginalFarPhotos = @"C:\Users\Dani\Desktop\TestImages\" + BaseID + @"\Original\Far\";
+            try
+            {
+                NumberOfBasePhotos = System.IO.Directory.GetFiles(PathForOriginalBasePhotos).Length;
+            }
+            catch (DirectoryNotFoundException dirEx)
+            {
+                NumberOfBasePhotos = 0;
+            }
+            try
+            {
+                NumberOfNearPhotos = System.IO.Directory.GetFiles(PathForOriginalNearPhotos).Length;
+            }
+            catch (DirectoryNotFoundException dirEx)
+            {
+                NumberOfNearPhotos = 0;
+            }
+            try
+            {
+                NumberOfFarPhotos = System.IO.Directory.GetFiles(PathForOriginalFarPhotos).Length;
+            }
+            catch (DirectoryNotFoundException dirEx)
+            {
+                NumberOfFarPhotos = 0;
+            }
         }
 
         public Bases createDbBase()

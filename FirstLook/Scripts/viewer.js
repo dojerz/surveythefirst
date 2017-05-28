@@ -1124,12 +1124,28 @@
 
     // View the previous image
     prev: function () {
-      this.view(max(this.index - 1, 0));
+        if (this.index - 1 < 0)
+        {
+            this.view(this.length - 1);
+        }
+        else
+        {
+            this.view(max(this.index - 1, 0));
+        }
+      //this.view(max(this.index - 1, 0));
     },
 
     // View the next image
     next: function () {
-      this.view(min(this.index + 1, this.length - 1));
+        if((this.index + 1) > (this.length - 1))
+        {
+            this.view(0);
+        }
+        else
+        {
+            this.view(min(this.index + 1, this.length - 1));
+        }
+      //this.view(min(this.index + 1, this.length - 1));
     },
 
     /**

@@ -146,6 +146,27 @@ function initDrawElements()
         iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
         popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
     });
+
+    customerActive = L.icon({
+        iconUrl: customerIconUrlActive,
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
+
+    customerOk = L.icon({
+        iconUrl: customerIconUrlOk,
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
+
+    customerFalse = L.icon({
+        iconUrl: customerIconUrlFalse,
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
 }
 
 function getAngle(surveyLat, surveyLon, baseLat, baseLon)

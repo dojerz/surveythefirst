@@ -22,6 +22,10 @@ namespace FirstLook
         public string Service { get; set; }
         public string Presales { get; set; }
         public int SurveyStateID { get; set; }
+        public string BaseID { get; set; }
+        public string WgsLAT { get; set; }
+        public string WgsLON { get; set; }
+        public System.DateTime Created { get; set; }
     
         public virtual SurveyStates SurveyStates { get; set; }
     }

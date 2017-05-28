@@ -1,0 +1,12 @@
+﻿@model List<FirstLook.Models.Survey>
+
+<div id="FilteredSurveys" style="display:none">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li id="@item.ID" lat="@item.WgsLAT" lon="@item.WgsLON" state="@item.SelectedStateID"></li>
+        }
+    </ul>
+</div>
+
+

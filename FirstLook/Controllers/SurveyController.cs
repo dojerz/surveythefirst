@@ -18,16 +18,19 @@ namespace FirstLook.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult Save(string siteAddress)
+        public PartialViewResult Save(string siteAddress, string lat, string lon, string baseID)
         {
             var surveyStates = bazisok.SurveyStates.ToList();
             Survey newSurvey = new Survey(surveyStates);
             newSurvey.SiteAddress = siteAddress;
+            newSurvey.WgsLAT = float.Parse(lat);
+            newSurvey.WgsLON = float.Parse(lon);
+            newSurvey.BaseID = baseID;
             return PartialView("SurveyModal", newSurvey);
         }
 
         [HttpPost]
-        public ActionResult Save(Survey survey)
+        public void Save(Survey survey)
         {
             if (ModelState.IsValid)
             {
@@ -43,29 +46,40 @@ namespace FirstLook.Controllers
                 bazisok.Surveys.Add(s);
                 bazisok.SaveChanges();
             }
-            return RedirectToAction("Surveys");
+            //return RedirectToAction("Surveys");
+        }
+
+        [HttpPost]
+        public void Kamu()
+        {
+
         }
 
         // GET: Surveys
         public ActionResult Surveys()
         {
-            List<Survey> surveys = getSureyList();
+            List<Survey> surveys = getSurveyList();
             return View(surveys);
         }
 
-        private List<Survey> getSureyList()
+        private List<Survey> getSurveyList()
         {
             List<Survey> surveys = new List<Survey>();
             var existingSurveys = bazisok.Surveys.ToList();
             var surveyStates = bazisok.SurveyStates.ToList();
-            /*var buildingTypes = bazisok.BuildingTypes.ToList();
-            var settlements = bazisok.Settlements.ToList();*/
-            var listength = existingSurveys.Count();
+            int listength = existingSurveys.Count();
             for (int i = 0; i < listength; i++)
             {
                 surveys.Add(new Survey(existingSurveys[i], surveyStates));
             }
             return surveys;
+        }
+
+        // GET: Survey/FilteredSurveys/{Coords}
+        public PartialViewResult FilteredSurveys()
+        {
+            List<Survey> filteredSurveys = getSurveyList();
+            return PartialView("~/Views/Survey/FilteredSurveys.cshtml", filteredSurveys);
         }
     }
 }

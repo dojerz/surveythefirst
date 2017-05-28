@@ -357,6 +357,9 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\customerACTIVE.png" />
+    <Content Include="Content\Images\customerFALSE.png" />
+    <Content Include="Content\Images\customerOK.png" />
     <Content Include="Content\Images\rTower.png" />
     <Content Include="Content\Images\rTower3.png" />
     <Content Include="Content\Images\rTower4.png" />
@@ -445,15 +448,19 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\Leaflet.GoogleMutant.js" />
     <Content Include="Scripts\MGScripts\Base.js" />
+    <Content Include="Scripts\MGScripts\ConvertEOV2WGS.js" />
     <Content Include="Scripts\MGScripts\DrawMapElements.js" />
     <Content Include="Scripts\MGScripts\FilteredBasesTable.js" />
     <Content Include="Scripts\MGScripts\leaflet.geometryutil.js" />
+    <Content Include="Scripts\MGScripts\Survey.js" />
     <Content Include="Scripts\MGScripts\SurveyMarker.js" />
     <Content Include="Scripts\MGScripts\SurveyScript.js" />
     <Content Include="Scripts\MGScripts\UserActions.js" />
@@ -514,6 +521,7 @@
     <Content Include="Views\Base\BasePhotos.cshtml" />
     <Content Include="Views\Survey\SurveyModal.cshtml" />
     <Content Include="Views\Survey\Surveys.cshtml" />
+    <Content Include="Views\Survey\FilteredSurveys.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageHandler\ImageHandler.csproj">

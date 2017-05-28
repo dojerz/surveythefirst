@@ -136,7 +136,7 @@ $(document).ready(function () {
     else
     {
         alert("Nincs kijelölve bázis!");
-    }
+    }*/
 
     function getNearestPhotoIndex(images, angleB)
     {
@@ -170,7 +170,7 @@ $(document).ready(function () {
         }
         return index;
     }
-}*/
+//}
 
 function geoCoding(addr)
 {

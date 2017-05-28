@@ -37,16 +37,20 @@ CREATE TABLE [dbo].[Bases] (
 );
 
 CREATE TABLE [dbo].[Surveys] (
-    [ID]           INT            NOT NULL,
-    [CustomerName] NVARCHAR (MAX) NOT NULL,
-    [SiteAddress]  NVARCHAR (MAX) NOT NULL,
-    [Capacity]     INT            NOT NULL,
-    [Service]      NVARCHAR (MAX) NOT NULL,
-    [Note]         NVARCHAR (MAX) NULL,
-    [Presales]     NVARCHAR (MAX) NOT NULL,
-	[SurveyStateID]   INT            NOT NULL,
+    [ID]            INT            NOT NULL,
+    [CustomerName]  NVARCHAR (MAX) NOT NULL,
+    [SiteAddress]   NVARCHAR (MAX) NOT NULL,
+	[WgsLAT]		NVARCHAR (MAX) NOT NULL,
+	[WgsLON]		NVARCHAR (MAX) NOT NULL,
+	[BaseID]		NVARCHAR (MAX) NOT NULL,
+    [Capacity]      INT            NOT NULL,
+    [Service]       NVARCHAR (MAX) NOT NULL,
+    [Note]          NVARCHAR (MAX) NULL,
+    [Presales]      NVARCHAR (MAX) NOT NULL,
+	[Created]		DATE		   NOT NULL,
+    [SurveyStateID] INT            NOT NULL,
     PRIMARY KEY CLUSTERED ([ID] ASC),
-	CONSTRAINT [FK_dbo.Bases_dbo.SurveyState_Id] FOREIGN KEY ([SurveyStateID]) REFERENCES [dbo].[SurveyStates] ([ID]) ON DELETE CASCADE
+    CONSTRAINT [FK_dbo.Bases_dbo.SurveyState_Id] FOREIGN KEY ([SurveyStateID]) REFERENCES [dbo].[SurveyStates] ([ID]) ON DELETE CASCADE
 );
 
 CREATE TABLE [dbo].[SurveyStates]

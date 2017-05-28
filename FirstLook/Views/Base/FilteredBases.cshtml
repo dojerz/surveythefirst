@@ -1,63 +1,13 @@
 ﻿@model List<FirstLook.Models.Base>
 
-<table id="FilterTable">
-    <thead>
-        <tr>
-            <th>
-                Megnevezés
-            </th>
-            <th>
-                Település
-            </th>
-            <th>
-                Építmény típusa
-            </th>
-            <th>
-                Átviteli technológia
-            </th>
-            <th>
-                Kapacitás
-            </th>
-            <th>
-                Talajszint feletti magasság (m)
-            </th>
-            <th>
-                Távolság (km)
-            </th>
-            <th>
-                Irányszög
-            </th>
-        </tr>
-    </thead>
-    <tbody>
+<div id="BasesInRange" style="display:none">
+    <ul>
         @foreach (var item in Model)
         {
-            <tr id="@item.ID" baseID="@item.BaseID" lat="@item.WgsLAT" lon="@item.WgsLON" class="unSelected" onclick="bases.baseTableEvent(this)">
-                <td>
-                    @item.Name
-                </td>
-                <td>
-                    @item.SelectedSettlementName
-                </td>
-                <td>
-                    @item.SelectedBuildingTypeName
-                </td>
-                <td>
-                    @item.Transmission
-                </td>
-                <td>
-                    @item.Capacity
-                </td>
-                <td>
-                    @item.Altitude
-                </td>
-                <td>
-                    @item.distanceFromSurveyPoint
-                </td>
-                <td>
-                </td>
-            </tr>
+            <li id="@item.ID" baseID="@item.BaseID" lat="@item.WgsLAT" lon="@item.WgsLON" numOfBPhotos="@item.NumberOfBasePhotos" numOfNPhotos="@item.NumberOfNearPhotos" numOfFPhotos="@item.NumberOfFarPhotos"
+                name="@item.Name" settlement="@item.SelectedSettlementName" building="@item.SelectedBuildingTypeName" transmission="@item.Transmission" capacity="@item.Capacity"
+                altitude="@item.Altitude" distance="@item.distanceFromSurveyPoint"></li>
         }
-    </tbody>
-</table>
+    </ul>
+</div>
 

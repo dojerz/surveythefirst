@@ -50,10 +50,14 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="CustomerName" Type="nvarchar(max)" Nullable="false" />
           <Property Name="SiteAddress" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="BaseID" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="WgsLAT" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="WgsLON" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Capacity" Type="int" Nullable="false" />
           <Property Name="Service" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="Presales" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Created" Type="date" Nullable="false" />
           <Property Name="SurveyStateID" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="SurveyStates">
@@ -230,6 +234,10 @@
           <Property Name="Presales" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="SurveyStateID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="SurveyStates" Relationship="BaseModels.FK_dbo_Bases_dbo_SurveyState_Id" FromRole="Surveys" ToRole="SurveyStates" />
+          <Property Name="BaseID" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="WgsLAT" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="WgsLON" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="0" />
         </EntityType>
         <EntityType Name="SurveyStates">
           <Key>
@@ -303,6 +311,10 @@
           <EntitySetMapping Name="Surveys">
             <EntityTypeMapping TypeName="BaseModels.Surveys">
               <MappingFragment StoreEntitySet="Surveys">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="WgsLON" ColumnName="WgsLON" />
+                <ScalarProperty Name="WgsLAT" ColumnName="WgsLAT" />
+                <ScalarProperty Name="BaseID" ColumnName="BaseID" />
                 <ScalarProperty Name="SurveyStateID" ColumnName="SurveyStateID" />
                 <ScalarProperty Name="Presales" ColumnName="Presales" />
                 <ScalarProperty Name="Service" ColumnName="Service" />

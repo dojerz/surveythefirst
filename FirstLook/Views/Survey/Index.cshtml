@@ -4,35 +4,108 @@
 
 <div id="StartSurvey">
     <p style="color:brown;font-size:large">Új Felmérés</p>
-    Hatósugár: <input id="InputRadius" type="text"> km
-    <div id="SearchArea">
-        <div id="SearchAddress">
-            <p style="color:brown;font-size:large">Cím szerint:</p>
-            <input id="InputAddress" type="text">
-            <button id="AddressButton" type="button">Keresés</button>
-        </div>
-        <div id="SearchCoords">
-            <p style="color:brown;font-size:large">Koordináta szerint:</p>
-            X koordináta: <input id="InputLat" type="text"><br>
-            Y koordináta: <input id="InputLon" type="text"><br>
-            <!--<button id="SurveyButton" type="button">Felmérés</button>-->
-        </div>
-    </div>
+    <table id="SurveyTable">
+        <tr>
+            <td>
+                Magasság:
+            </td>
+            <td>
+                <input id="InputHeight" type="text"> m
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Hatósugár:
+            </td>
+            <td>
+                <input id="InputRadius" type="text"> km
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Helyszín címe:
+            </td>
+            <td>
+                <input id="InputAddress" type="text">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                WGS Lat:
+            </td>
+            <td>
+                <input id="InputLat" type="text">
+            </td>
+            <td>
+                EOVX:
+            </td>
+            <td>
+                <input id="InputEOVX" type="text">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                WGS Lon:
+            </td>
+            <td>
+                <input id="InputLon" type="text">
+            </td>
+            <td>
+                EOVY:
+            </td>
+            <td>
+                <input id="InputEOVY" type="text">
+            </td>
+            <td>
+                <button id="AddressButton" type="button">Felmérés indítása</button>
+            </td>
+        </tr>
+    </table>
 </div>
 <br><br>
 <div style="color:#cc0099;font-weight: bold;">Szóba jöhető bázisok:</div>
+<table id="FilterTable">
+    <thead>
+        <tr>
+            <th>
+                Megnevezés
+            </th>
+            <th>
+                Település
+            </th>
+            <th>
+                Építmény típusa
+            </th>
+            <th>
+                Átviteli technológia
+            </th>
+            <th>
+                Kapacitás
+            </th>
+            <th>
+                Talajszint feletti magasság (m)
+            </th>
+            <th>
+                Távolság (km)
+            </th>
+            <th>
+                Irányszög
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
 <div id="AboveMap" style="padding-bottom:5px">
+    <div id="Surveys"></div>
     <div id="Bases"></div>
     <div id="Photos"></div>
     <div id="Actions">
         <p style="float:right">Bázisképek megtekintése</p>
-        <button style="float:right" id="GetNearPicturesButton" type="button" class="disabledButton">Közeli</button>
-        <button style="float:right" id="GetFarPicturesButton" type="button" class="disabledButton">Távoli</button>
-        <button style="float:right" id="GetBasePicturesButton" type="button" class="disabledButton">Bázis</button>
+        <button style="float:right" id="GetNearPhotosButton" type="button" class="disabledButton">Közeli</button>
+        <button style="float:right" id="GetFarPhotosButton" type="button" class="disabledButton">Távoli</button>
+        <button style="float:right" id="GetBasePhotosButton" type="button" class="disabledButton">Bázis</button>
         <br><br><br>
-        <div style="float:right; width:70%">
-            Irányszög: <input type="text" id="MapAngle">
-        </div>
         <button style=" background-color:darkgreen; color:white; position: absolute; bottom: 0; right: 0;" id="SaveButton" type="button">Felmérés mentése</button>
     </div>
 </div>
@@ -50,20 +123,34 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5DkyQIBmE2VS4wFzZ0QSepje_6Mwkp1Q&sensor=false"></script>
     <script src="~/Scripts/Leaflet.GoogleMutant.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/Scripts/MGScripts/DrawMapElements.js"></script>
     <script src="~/Scripts/MGScripts/UserActions.js"></script>
     <script src="~/Scripts/MGScripts/FilteredBasesTable.js"></script>
     <script src="~/Scripts/MGScripts/leaflet.geometryutil.js"></script>
     <script src="~/Scripts/MGScripts/Base.js"></script>
     <script src="~/Scripts/MGScripts/SurveyMarker.js"></script>
+    <script src="~/Scripts/MGScripts/Survey.js"></script>
+    <script src="~/Scripts/MGScripts/ConvertEOV2WGS.js"></script>
     <link href="@Url.Content("~/Content/Survey.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/viewer.css")" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/viewer.js"></script>
 
    <script>
 
-       var bases = new BaseController();
+       //var tableBody = $('#FilterTable tbody')[0];
+       var bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'));
+       bases.setToDefault();
+       var surveys = new SurveyController(map);
        var surveyMarker = new SurveyMarker();
+       jQuery('#Surveys').load('@Url.Action("FilteredSurveys", "Survey")', filteredSurveyListIsReady);
+       //alert(eovTOwgs84(200000, 500000));
+
+       function filteredSurveyListIsReady()
+       {
+           var surveyList = $('#FilteredSurveys' + ' ul' + ' li');
+           surveys.initSurveys(surveyList);
+       }
 
        initTablevalues();
 
@@ -99,11 +186,9 @@
            function openViewer()
            {
                imageContainer = $('.Gallery');
-               /*images = $('#' + baseID + '.near' + ' li' + ' img');
                images = $('.Gallery' + ' ul' + ' li' + ' img');
-               alert(images.length);*/
-               index = 0;//getNearestPhotoIndex(images, angle);
-               //alert(1);
+               var angle = bases.getSelectedBaseAngle();
+               index = getNearestPhotoIndex(images, angle);
                imageContainer.viewer(
                {
                     url: 'data-original',
@@ -114,20 +199,29 @@
                         $(this).viewer('destroy');
                     }
                }).viewer('show');
-               //alert(2);
            }
        }
 
        function filteredBasesTableIsReady() {
-           rows = document.getElementById("FilterTable").rows;
-           dataRows = $('#FilterTable tbody tr');
-           fillAngleInTable(getLatForClient(), getLonForClient(), dataRows, 7);
-           bases.initBases(dataRows, map);
+           //rows = document.getElementById("FilterTable").rows;
+           //dataRows = $('#FilterTable tbody tr');
+           /*var basePhotosButton = $('#GetBasePhotosButton');
+           var nearPhotosButton = $('#GetNearPhotosButton');
+           var farPhotosButton = $('#GetFarPhotosButton');*/
+
+           $("#FilterTable tbody tr").remove();
+           var baseList = $('#BasesInRange' + ' ul' + ' li');
+
+           //fillAngleInTable(getLatForClient(), getLonForClient(), dataRows, 7);
+           bases.initBases(getLatForClient(), getLonForClient(), baseList);
            surveyMarker.drawMarker(map);
        }
 
        var towerIconUrlUnselected = '@Url.Content("~/Content/Images/rTower4.png")';
        var towerIconUrlSelected = '@Url.Content("~/Content/Images/rTower3.png")';
+       var customerIconUrlActive = '@Url.Content("~/Content/Images/customerACTIVE.png")';
+       var customerIconUrlOk = '@Url.Content("~/Content/Images/customerOK.png")';
+       var customerIconUrlFalse = '@Url.Content("~/Content/Images/customerFALSE.png")';
        initDrawElements();
 
        jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 0);
@@ -135,11 +229,14 @@
        $("#SaveButton").on('click', function (e) {
            var url = "/Survey/Save";
            var siteAddress = surveyAddress.val();
-           $.get(url + "?siteAddress=" + siteAddress, function (data) {
+           var wgsLAT = getLatForServer();
+           var wgsLON = getLonForServer();
+           var baseID = bases.getSelectedBaseID();
+           $.get(url + "?siteAddress=" + siteAddress + "&lat=" + wgsLAT + "&lon=" + wgsLON + "&baseID=" + baseID, function (data) {
                $('#SurveyContainer').html(data);
                $('#Modal').modal();
            });
-            
+
 
        });
 
