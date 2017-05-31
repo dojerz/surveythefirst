@@ -5,6 +5,7 @@ $(document).ready(function () {
     surveyLon = jQuery('#InputLon');
     surveyRadius = jQuery('#InputRadius');
     surveyAddress = jQuery('#InputAddress');
+    surveyAltitude = jQuery('#InputHeight');
 
     surveyLat.val("");
     surveyLon.val("");
@@ -252,4 +253,9 @@ function getAddress()
 {
     var value = surveyAddress.val();
     return value;
+}
+
+function getAltitude()
+{
+    return surveyAltitude.val();
 }

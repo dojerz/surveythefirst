@@ -110,6 +110,7 @@
     </div>
 </div>
 <div id="Map" style="height:400px; width:100%"></div>
+<div id="LineOfSight"></div>
 <div class="modal fade" id="Modal" role="dialog">
     <div id="SurveyContainer">
     </div>
@@ -119,32 +120,53 @@
 @section Scripts
 {
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-    <script src="https://www.google.com/jsapi"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5DkyQIBmE2VS4wFzZ0QSepje_6Mwkp1Q&sensor=false"></script>
     <script src="~/Scripts/Leaflet.GoogleMutant.js"></script>
+    <script src="~/Scripts/leaflet.geometryutil.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5DkyQIBmE2VS4wFzZ0QSepje_6Mwkp1Q&sensor=false"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
     <script src="~/Scripts/MGScripts/DrawMapElements.js"></script>
     <script src="~/Scripts/MGScripts/UserActions.js"></script>
     <script src="~/Scripts/MGScripts/FilteredBasesTable.js"></script>
-    <script src="~/Scripts/MGScripts/leaflet.geometryutil.js"></script>
     <script src="~/Scripts/MGScripts/Base.js"></script>
     <script src="~/Scripts/MGScripts/SurveyMarker.js"></script>
     <script src="~/Scripts/MGScripts/Survey.js"></script>
     <script src="~/Scripts/MGScripts/ConvertEOV2WGS.js"></script>
+    <script src="~/Scripts/MGScripts/ElevationCalculator.js"></script>
     <link href="@Url.Content("~/Content/Survey.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/viewer.css")" rel="stylesheet" type="text/css" />
+
     <script src="~/Scripts/viewer.js"></script>
 
    <script>
 
        //var tableBody = $('#FilterTable tbody')[0];
-       var bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'));
+       var bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'), $('#LineOfSight'));
        bases.setToDefault();
        var surveys = new SurveyController(map);
        var surveyMarker = new SurveyMarker();
        jQuery('#Surveys').load('@Url.Action("FilteredSurveys", "Survey")', filteredSurveyListIsReady);
        //alert(eovTOwgs84(200000, 500000));
+
+       /*var counter = 0;
+       var myVar = setInterval(myTimer, 1000);
+       function myTimer() {
+           if (counter < 10)
+           {
+               alert(counter);
+               counter++;
+           }
+           else
+           {
+               alert("end");
+               clearInterval(myVar);
+           }
+       }*/
 
        function filteredSurveyListIsReady()
        {
@@ -213,7 +235,7 @@
            var baseList = $('#BasesInRange' + ' ul' + ' li');
 
            //fillAngleInTable(getLatForClient(), getLonForClient(), dataRows, 7);
-           bases.initBases(getLatForClient(), getLonForClient(), baseList);
+           bases.initBases(getLatForClient(), getLonForClient(), getAltitude(), baseList);
            surveyMarker.drawMarker(map);
        }
 

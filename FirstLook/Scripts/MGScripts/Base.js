@@ -1,38 +1,95 @@
 ﻿function Base(baseID, lat, lon, name, settlement, building, transmission, capacity, altitude, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos)
 {
-    this.BaseID = baseID;
-    this.Lat = lat;
-    this.Lon = lon;
-    this.Name = name;
-    this.Settlement = settlement;
-    this.Building = building;
-    this.Transmission = transmission;
-    this.Capacity = capacity;
-    this.Altitude = altitude;
-    this.Distance = distance;
-    this.NumOfBPhotos = numOfBPhotos;
-    this.NumOfNPhotos = numOfNPhotos;
-    this.NumOfFPhotos = numOfFPhotos;
-    this.Angle;
-    this.TableRowIndex;
+    var BaseID = baseID;
+    var Lat = lat;
+    var Lon = lon;
+    var Name = name;
+    var Settlement = settlement;
+    var Building = building;
+    var Transmission = transmission;
+    var Capacity = capacity;
+    var Altitude = altitude;
+    var Distance = distance;
+    var NumOfBPhotos = numOfBPhotos;
+    var NumOfNPhotos = numOfNPhotos;
+    var NumOfFPhotos = numOfFPhotos;
+    var Angle;
+    var TableRowIndex;
+    var HasLineOfSight = null;
 
-    this.getCoordsWGS =
-    function()
-    {
-        return [this.Lat, this.Lon];
-    }
-
+    this.getCoordsWGS = function() { return [Lat, Lon]; }
+    this.getBaseID = function () { return BaseID; }
+    this.getLat = function () { return Lat; }
+    this.getLon = function () { return Lon; }
+    this.getName = function () { return Name; }
+    this.getSettlement = function () { return Settlement; }
+    this.getBuilding = function () { return Building; }
+    this.getTransmission = function () { return Transmission; }
+    this.getCapacity = function () { return Capacity; }
+    this.getAltitude = function () { return Altitude; }
+    this.getDistance = function () { return Distance; }
+    this.getNumOfBPhotos = function () { return NumOfBPhotos; }
+    this.getNumOfNPhotos = function () { return NumOfNPhotos; }
+    this.getNumOfFPhotos = function () { return NumOfFPhotos; }
+    this.getAngle = function () { return Angle; }
+    this.setTableRowIndex = function (value) { TableRowIndex = value; }
+    this.getTableRowIndex = function () { return TableRowIndex; }
+    this.hasLineOfSight = function() { return HasLineOfSight; }
+    
     this.calculateAngleBySurveyCoords =
     function(surveyLat, surveyLon)
     {
-        angle = getAngle(surveyLat, surveyLon, this.Lat, this.Lon);
+        angle = getAngle(surveyLat, surveyLon, Lat, Lon);
         angle = Math.round(angle * 10) / 10;
         angle = angle.toString().replace(",", ".");
-        this.Angle = angle;
+        Angle = angle;
+    }
+
+    this.calculateLineOfSight =
+    function(surveyLat, surveyLon, surveyAltitude)
+    {
+        var elevator = new google.maps.ElevationService;
+        var path = [
+                { lat: Number(surveyLat), lng: Number(surveyLon) },
+            	{ lat: Number(Lat), lng: Number(Lon) }];
+        elevator.getElevationAlongPath({ 'path': path, 'samples': 120 }, elevationLoader);
+
+        function elevationLoader(elevations, status)
+        {
+            if (status == 'OK')
+            {
+                HasLineOfSight = elevationCalculator(elevations, Distance * 1000, surveyAltitude, Altitude, true);
+            }
+            else
+            {
+                alert("Átlátás vizsgálata nem sikerült!");
+            }
+        }
+    }
+
+    this.drawElevationToSurveyPoint =
+    function (surveyLat, surveyLon, surveyAltitude, chart)
+    {
+        var elevator = new google.maps.ElevationService;
+        var path = [
+                { lat: Number(surveyLat), lng: Number(surveyLon) },
+            	{ lat: Number(Lat), lng: Number(Lon) }];
+        elevator.getElevationAlongPath({ 'path': path, 'samples': 120 }, elevationLoader);
+
+        function elevationLoader(elevations, status)
+        {
+            if (status == 'OK') {
+                var elevation = elevationCalculator(elevations, Distance * 1000, surveyAltitude, Altitude, false);
+                drawCurveTypes(elevation, chart);
+            }
+            else {
+                alert("Átlátás vizsgálata nem sikerült!");
+            }
+        }
     }
 }
 
-function BaseController(map, tableBody, bpb, npb, fpb)
+function BaseController(map, tableBody, bpb, npb, fpb, los)
 {
     var Btrs;
     var Bases = new Array();
@@ -42,6 +99,7 @@ function BaseController(map, tableBody, bpb, npb, fpb)
     var BasePhotosButton = bpb;
     var NearPhotosButton = npb;
     var FarPhotosButton = fpb;
+    var LineOfSightChart = los;
     var selectedBaseID = null;
 
     BasePhotosButton.on('click', function (e) {
@@ -59,10 +117,10 @@ function BaseController(map, tableBody, bpb, npb, fpb)
     this.setToDefault =
     function()
     {
-        setToDefaultPr();
+        setToDefaultPrivate();
     }
 
-    function setToDefaultPr()
+    function setToDefaultPrivate()
     {
         setPhotoButton(BasePhotosButton, false);
         setPhotoButton(NearPhotosButton, false);
@@ -70,7 +128,7 @@ function BaseController(map, tableBody, bpb, npb, fpb)
     }
 
     this.initBases =
-    function (surveyLat, surveyLon, baseList)
+    function (surveyLat, surveyLon, surveyAltitude, baseList)
     {
         Btrs = baseList;
         var listLength = Btrs.length;
@@ -106,15 +164,44 @@ function BaseController(map, tableBody, bpb, npb, fpb)
             numOfFPhotos = Btrs[i].getAttribute("numoffphotos");
             base = new Base(baseID, lat, lon, name, settlement, building, transmission, capacity, altitude, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos);
             base.calculateAngleBySurveyCoords(surveyLat, surveyLon);
-            base.TableRowIndex = i;
+            base.setTableRowIndex(i);
+            base.calculateLineOfSight(surveyLat, surveyLon, surveyAltitude);
             Bases.push(base);
         }
-        this.fillBaseTable();
-        this.drawBasesOnMap();
+
+        if(!chechBaseValues())
+        {
+            timer = setInterval(chechBaseValues, 100);
+        }
+    }
+
+    function chechBaseValues()
+    {
+        var listLength = Bases.length;
+        for (var i = 0; i < listLength; i++)
+        {
+            if(Bases[i].hasLineOfSight() == null)
+            {
+                return;
+            }
+        }
+        clearInterval(timer);
+        viewMethods();
+    }
+
+    function viewMethods()
+    {
+        fillBaseTablePrivate();
+        drawBasesOnMapPrivate();
     }
 
     this.drawBasesOnMap =
     function()
+    {
+        drawBasesOnMapPrivate();
+    }
+
+    function drawBasesOnMapPrivate()
     {
         var listLength = BaseIcons.length;
         if (listLength > 0) {
@@ -126,13 +213,13 @@ function BaseController(map, tableBody, bpb, npb, fpb)
         listLength = Bases.length;
         for (var i = 0; i < listLength; i++)
         {
-            if (Bases[i].BaseID == selectedBaseID)
+            if (Bases[i].getBaseID() == selectedBaseID)
             {
-                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].BaseID, rowIndex: Bases[i].TableRowIndex }).on('click', clickOnBaseEvent));
+                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
             }
             else
             {
-                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].BaseID, rowIndex: Bases[i].TableRowIndex }).on('click', clickOnBaseEvent));
+                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
             }
             Map.addLayer(BaseIcons[i]);
             BaseIcons[i].bindPopup("<b>Bázis</b><br />");
@@ -142,15 +229,20 @@ function BaseController(map, tableBody, bpb, npb, fpb)
     this.fillBaseTable =
     function()
     {
+        fillBaseTablePrivate();
+    }
+
+    function fillBaseTablePrivate()
+    {
         var listLength = Bases.length;
         var row;
-        this.setToDefault();
+        setToDefaultPrivate();
         for(var i = 0; i < listLength; i++)
         {
             row = TableBody.insertRow(TableBody.rows.length);
-            row.setAttribute("baseid", Bases[i].BaseID);
+            row.setAttribute("baseid", Bases[i].getBaseID());
             row.setAttribute("onclick", "bases.baseTableEvent(this)");
-            if (Bases[i].BaseID == selectedBaseID)
+            if (Bases[i].getBaseID() == selectedBaseID)
             {
                 row.className = "selected";
                 setPhotoButtonsToBase(Bases[i]);
@@ -159,14 +251,14 @@ function BaseController(map, tableBody, bpb, npb, fpb)
             {
                 row.className = "unSelected";
             }
-            row.insertCell(0).innerHTML = Bases[i].Name;
-            row.insertCell(1).innerHTML = Bases[i].Settlement;
-            row.insertCell(2).innerHTML = Bases[i].Building;
-            row.insertCell(3).innerHTML = Bases[i].Transmission;
-            row.insertCell(4).innerHTML = Bases[i].Capacity;
-            row.insertCell(5).innerHTML = Bases[i].Altitude;
-            row.insertCell(6).innerHTML = Bases[i].Distance;
-            row.insertCell(7).innerHTML = Bases[i].Angle;
+            row.insertCell(0).innerHTML = Bases[i].getName();
+            row.insertCell(1).innerHTML = Bases[i].getSettlement();
+            row.insertCell(2).innerHTML = Bases[i].getBuilding();
+            row.insertCell(3).innerHTML = Bases[i].getTransmission();
+            row.insertCell(4).innerHTML = Bases[i].getCapacity();
+            row.insertCell(5).innerHTML = Bases[i].getAltitude();
+            row.insertCell(6).innerHTML = Bases[i].getDistance();
+            row.insertCell(7).innerHTML = Bases[i].getAngle();
         }
     }
 
@@ -175,7 +267,7 @@ function BaseController(map, tableBody, bpb, npb, fpb)
         var listLength = Bases.length;
         for(var i = 0; i < listLength; i++)
         {
-            if(Bases[i].BaseID == baseID)
+            if(Bases[i].getBaseID() == baseID)
             {
                 return Bases[i];
             }
@@ -187,15 +279,15 @@ function BaseController(map, tableBody, bpb, npb, fpb)
         var base = getBaseByBaseID(baseID);
         var otherBase;
         var j;
-        var i = base.TableRowIndex;
+        var i = base.getTableRowIndex();
         Map.removeLayer(BaseIcons[i]);
-        if (base.BaseID == selectedBaseID)
+        if (base.getBaseID() == selectedBaseID)
         {
             selectedBaseID = null;
             TableBody.rows[i].setAttribute("class", "unSelected");
-            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].BaseID, rowIndex: Bases[i].TableRowIndex }).on('click', clickOnBaseEvent);
+            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
             BaseIcons[i].bindPopup("<b>Bázis</b><br />");
-            setToDefaultPr();
+            setToDefaultPrivate();
         }
         else
         {
@@ -204,17 +296,18 @@ function BaseController(map, tableBody, bpb, npb, fpb)
                 otherBase = getBaseByBaseID(selectedBaseID);
                 if (otherBase)
                 {
-                    j = otherBase.TableRowIndex;
+                    j = otherBase.getTableRowIndex();
                     TableBody.rows[j].setAttribute("class", "unSelected");
                     Map.removeLayer(BaseIcons[j]);
-                    BaseIcons[j] = new L.marker(Bases[j].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[j].BaseID, rowIndex: Bases[j].TableRowIndex }).on('click', clickOnBaseEvent);
+                    BaseIcons[j] = new L.marker(Bases[j].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[j].getBaseID(), rowIndex: Bases[j].getTableRowIndex() }).on('click', clickOnBaseEvent);
                     Map.addLayer(BaseIcons[j]);
                     BaseIcons[j].bindPopup("<b>Bázis</b><br />");
                 }
             }
+            Bases[i].drawElevationToSurveyPoint(getLatForClient(), getLonForClient(), getAltitude(), LineOfSightChart);
             TableBody.rows[i].setAttribute("class", "selected");
-            selectedBaseID = Bases[i].BaseID;
-            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].BaseID, rowIndex: Bases[i].TableRowIndex }).on('click', clickOnBaseEvent);
+            selectedBaseID = Bases[i].getBaseID();
+            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
             setPhotoButtonsToBase(base);
         }
         Map.addLayer(BaseIcons[i]);
@@ -242,7 +335,7 @@ function BaseController(map, tableBody, bpb, npb, fpb)
             var selectedBase = getBaseByBaseID(selectedBaseID);
             if (selectedBase)
             {
-                return [selectedBase.Lat, selectedBase.Lon];
+                return [selectedBase.getLat(), selectedBase.getLon()];
             }
         }
     }
@@ -261,7 +354,7 @@ function BaseController(map, tableBody, bpb, npb, fpb)
             var selectedBase = getBaseByBaseID(selectedBaseID);
             if (selectedBase)
             {
-                return selectedBase.Angle;
+                return selectedBase.getAngle();
             }
         }
     }
@@ -282,19 +375,19 @@ function BaseController(map, tableBody, bpb, npb, fpb)
 
     function setPhotoButtonsToBase(base)
     {
-        if (base.NumOfBPhotos > 0) {
+        if (base.getNumOfBPhotos() > 0) {
             setPhotoButton(BasePhotosButton, true);
         }
         else {
             setPhotoButton(BasePhotosButton, false);
         }
-        if (base.NumOfNPhotos > 0) {
+        if (base.getNumOfNPhotos() > 0) {
             setPhotoButton(NearPhotosButton, true);
         }
         else {
             setPhotoButton(NearPhotosButton, false);
         }
-        if (base.NumOfFPhotos > 0) {
+        if (base.getNumOfFPhotos() > 0) {
             setPhotoButton(FarPhotosButton, true);
         }
         else {
