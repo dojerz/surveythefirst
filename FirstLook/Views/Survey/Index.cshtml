@@ -2,115 +2,124 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="StartSurvey">
-    <p style="color:brown;font-size:large">Új Felmérés</p>
-    <table id="SurveyTable">
-        <tr>
-            <td>
-                Magasság:
-            </td>
-            <td>
-                <input id="InputHeight" type="text"> m
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Hatósugár:
-            </td>
-            <td>
-                <input id="InputRadius" type="text"> km
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Helyszín címe:
-            </td>
-            <td>
-                <input id="InputAddress" type="text">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                WGS Lat:
-            </td>
-            <td>
-                <input id="InputLat" type="text">
-            </td>
-            <td>
-                EOVX:
-            </td>
-            <td>
-                <input id="InputEOVX" type="text">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                WGS Lon:
-            </td>
-            <td>
-                <input id="InputLon" type="text">
-            </td>
-            <td>
-                EOVY:
-            </td>
-            <td>
-                <input id="InputEOVY" type="text">
-            </td>
-            <td>
-                <button id="AddressButton" type="button">Felmérés indítása</button>
-            </td>
-        </tr>
-    </table>
+<div id="MyContainer">
+    <div id="Map"></div>
+        <div id="StartSurvey">
+            <p style=" background-color:brown; color:white; font-weight:bold; font-size:large; display:inline-block; padding-left:2px; padding-right:2px">Ügyfél mérési adatai a bázisok lekérdezéséhez:</p>
+                    <table id="SurveyTable">
+                        <tr>
+                            <td>
+                                <div class="DataText">Helyszín címe:</div>
+                            </td>
+                            <td colspan="3">
+                                <input id="InputAddress" type="text" size="40">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="DataText">Épület Magassága:</div>
+                            </td>
+                            <td colspan="3">
+                                <input id="InputHeight" type="text" size="4"><div class="DataText">m</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="DataText">Bázis max. távolsága:</div>
+                            </td>
+                            <td colspan="3">
+                                <input id="InputRadius" type="text" size="4"><div class="DataText">km</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="DataText">WGS Lat:</div>
+                            </td>
+                            <td>
+                                <input id="InputLat" type="text" size="8">
+                            </td>
+                            <td>
+                                <div class="DataText">EOVX:</div>
+                            </td>
+                            <td>
+                                <input id="InputEOVX" type="text" size="8" style="float:right">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="DataText">WGS Lon:</div>
+                            </td>
+                            <td>
+                                <input id="InputLon" type="text" size="8">
+                            </td>
+                            <td>
+                                <div class="DataText">EOVY:</div>
+                            </td>
+                            <td>
+                                <input id="InputEOVY" type="text" size="8" style="float:right">
+                            </td>
+                        <tr>
+                            <td colspan="4">
+                                <button id="AddressButton" type="button">Felmérés indítása</button>
+                            </td>
+                        </tr>
+                    </table>
+    </div>
+    <div id="TableSection">
+        <div style="color:#cc0099;font-weight: bold">
+            Szóba jöhető bázisok:
+        </div>
+            <table id="FilterTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Megnevezés
+                        </th>
+                        <th>
+                            Település
+                        </th>
+                        <th>
+                            Építmény típusa
+                        </th>
+                        <th>
+                            Átviteli technológia
+                        </th>
+                        <th>
+                            Kapacitás
+                        </th>
+                        <th>
+                            Talajszint feletti magasság (m)
+                        </th>
+                        <th>
+                            Távolság (km)
+                        </th>
+                        <th>
+                            Irányszög
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        <div id="BasePhotoButtonsSection">
+            <div class="DataText">Képek:</div>
+            <button style="float:right" id="GetFarPhotosButton" type="button" class="disabledButton">Távoli</button>
+            <button style="float:right" id="GetNearPhotosButton" type="button" class="disabledButton">Közeli</button>
+            <button style="float:right" id="GetBasePhotosButton" type="button" class="disabledButton">Bázis</button>
+        </div>
+    </div>
+    <div id="ActionButtons">
+        <button style=" background-color:blueviolet; color:white;" id="BaseButton" type="button">Bázis adatok</button>
+        <button style=" background-color:brown; color:white;" id="LosButton" type="button">Átlátás</button>
+        <button style=" background-color:crimson; color:white;" id="CustomerButton" type="button">Ügyfél adatok</button>
+        <button style=" background-color:darkgreen; color:white;" id="SaveButton" type="button">Felmérés mentése</button>
+    </div>
+    <div id="LineOfSight"></div>
 </div>
-<br><br>
-<div style="color:#cc0099;font-weight: bold;">Szóba jöhető bázisok:</div>
-<table id="FilterTable">
-    <thead>
-        <tr>
-            <th>
-                Megnevezés
-            </th>
-            <th>
-                Település
-            </th>
-            <th>
-                Építmény típusa
-            </th>
-            <th>
-                Átviteli technológia
-            </th>
-            <th>
-                Kapacitás
-            </th>
-            <th>
-                Talajszint feletti magasság (m)
-            </th>
-            <th>
-                Távolság (km)
-            </th>
-            <th>
-                Irányszög
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-<div id="AboveMap" style="padding-bottom:5px">
+
     <div id="Surveys"></div>
     <div id="Bases"></div>
     <div id="Photos"></div>
-    <div id="Actions">
-        <p style="float:right">Bázisképek megtekintése</p>
-        <button style="float:right" id="GetNearPhotosButton" type="button" class="disabledButton">Közeli</button>
-        <button style="float:right" id="GetFarPhotosButton" type="button" class="disabledButton">Távoli</button>
-        <button style="float:right" id="GetBasePhotosButton" type="button" class="disabledButton">Bázis</button>
-        <br><br><br>
-        <button style=" background-color:darkgreen; color:white; position: absolute; bottom: 0; right: 0;" id="SaveButton" type="button">Felmérés mentése</button>
-    </div>
-</div>
-<div id="Map" style="height:400px; width:100%"></div>
-<div id="LineOfSight"></div>
+
 <div class="modal fade" id="Modal" role="dialog">
     <div id="SurveyContainer">
     </div>
@@ -145,12 +154,17 @@
 
    <script>
 
+       $(window).on("resize", function () { $("#Map").height($(window).height()); map.invalidateSize(); }).trigger("resize");
+
+       init();
+
        //var tableBody = $('#FilterTable tbody')[0];
-       var bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'), $('#LineOfSight'));
-       bases.setToDefault();
-       var surveys = new SurveyController(map);
-       var surveyMarker = new SurveyMarker();
+       //var bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'), $('#LineOfSight'));
+       //bases.setToDefault();
+       //var surveys = new SurveyController(map);
        jQuery('#Surveys').load('@Url.Action("FilteredSurveys", "Survey")', filteredSurveyListIsReady);
+
+
        //alert(eovTOwgs84(200000, 500000));
 
        /*var counter = 0;
@@ -167,6 +181,46 @@
                clearInterval(myVar);
            }
        }*/
+
+       function init()
+       {
+           surveyMarker = new SurveyMarker(map, jQuery('#InputAddress'), jQuery('#AddressButton'), jQuery('#InputLat'), jQuery('#InputLon'), jQuery('#InputRadius'), jQuery('#InputHeight'));
+           surveyMarker.addViews([$("#StartSurvey")]);
+           bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'), $('#LineOfSight'));
+           bases.addViews([$("#TableSection"), $("#LineOfSight")]);
+           bases.setToDefault();
+           surveys = new SurveyController(map);
+           jQuery('#Surveys').load('@Url.Action("FilteredSurveys", "Survey")', filteredSurveyListIsReady);
+           jQuery('#BaseButton').on("click", function () { bases.changeViewVisibility(0); });
+           jQuery('#LosButton').on("click", function () { bases.changeViewVisibility(1); });
+           jQuery('#CustomerButton').on("click", function () { surveyMarker.changeViewVisibility(0); });
+           //jQuery('#Surveys').on("click", function () { });
+       }
+
+       function queryBasesFromDatabase()
+       {
+           var lat = surveyMarker.getWgsLatForServer();
+           var lon = surveyMarker.getWgsLonForServer();
+           var r = surveyMarker.getRadiusForServer();
+           jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 1 + '&xCoord=' + lat + '&yCoord=' + lon + '&radius=' + r, filteredBasesListIsReady);
+
+           function filteredBasesListIsReady()
+           {
+               $("#FilterTable tbody tr").remove();
+               var baseList = $('#BasesInRange' + ' ul' + ' li');
+               bases.initBases(surveyMarker, baseList);
+           }
+       }
+
+       function hideElement(element)
+       {
+           element.hide();
+       }
+
+       function showElement(element)
+       {
+           element.show();
+       }
 
        function filteredSurveyListIsReady()
        {
@@ -207,6 +261,10 @@
 
            function openViewer()
            {
+               surveyMarker.hideAllViews();
+               bases.hideAllViews();
+               $(".navbar-fixed-top").hide();
+               $("#ActionButtons").hide();
                imageContainer = $('.Gallery');
                images = $('.Gallery' + ' ul' + ' li' + ' img');
                var angle = bases.getSelectedBaseAngle();
@@ -219,6 +277,10 @@
                     },
                     hidden: function (e) {
                         $(this).viewer('destroy');
+                        $(".navbar-fixed-top").show();
+                        $("#ActionButtons").show();
+                        bases.restoreVisibility();
+                        surveyMarker.restoreVisibility();
                     }
                }).viewer('show');
            }
@@ -239,8 +301,10 @@
            surveyMarker.drawMarker(map);
        }
 
-       var towerIconUrlUnselected = '@Url.Content("~/Content/Images/rTower4.png")';
-       var towerIconUrlSelected = '@Url.Content("~/Content/Images/rTower3.png")';
+       var towerIconUrlUnselectedLOS = '@Url.Content("~/Content/Images/rTowerPurple.png")';
+       var towerIconUrlSelectedLOS = '@Url.Content("~/Content/Images/rTowerOrange.png")';
+       var towerIconUrlUnselectedNLOS = '@Url.Content("~/Content/Images/rTowerGrey.png")';
+       var towerIconUrlSelectedNLOS = '@Url.Content("~/Content/Images/rTowerRed.png")';
        var customerIconUrlActive = '@Url.Content("~/Content/Images/customerACTIVE.png")';
        var customerIconUrlOk = '@Url.Content("~/Content/Images/customerOK.png")';
        var customerIconUrlFalse = '@Url.Content("~/Content/Images/customerFALSE.png")';
@@ -250,11 +314,15 @@
 
        $("#SaveButton").on('click', function (e) {
            var url = "/Survey/Save";
-           var siteAddress = surveyAddress.val();
-           var wgsLAT = getLatForServer();
-           var wgsLON = getLonForServer();
+           var siteAddress = surveyMarker.getAddress();
+           var wgsLAT = surveyMarker.getWgsLatForServer();
+           var wgsLON = surveyMarker.getWgsLonForServer();
            var baseID = bases.getSelectedBaseID();
            $.get(url + "?siteAddress=" + siteAddress + "&lat=" + wgsLAT + "&lon=" + wgsLON + "&baseID=" + baseID, function (data) {
+               surveyMarker.hideAllViews();
+               bases.hideAllViews();
+               $(".navbar-fixed-top").hide();
+               $("#ActionButtons").hide();
                $('#SurveyContainer').html(data);
                $('#Modal').modal();
            });

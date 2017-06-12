@@ -64,8 +64,8 @@ function elevationCalculator(elev, dist, sHeight, bHeight, getOnlyLos)
 }
 
 function drawCurveTypes(elev, chartDiv) {
-    alert("drawCurveTypes");
-    var data = new google.visualization.DataTable(); alert(1);
+
+    var data = new google.visualization.DataTable();
     data.addColumn('number', 'X');
     data.addColumn('number', 'LOS');
     data.addColumn('number', 'Domborzat');
@@ -73,7 +73,6 @@ function drawCurveTypes(elev, chartDiv) {
     for (var i = 0; i < elev.length; i++) {
         data.addRows([[elev[i].dist, elev[i].calculatedElev, elev[i].googleElev]]);
     }
-
 
     var options = {
         hAxis: {
@@ -95,6 +94,6 @@ function drawCurveTypes(elev, chartDiv) {
         }
 
     };
-    var chart = new google.visualization.LineChart(chartDiv);
+    var chart = new google.visualization.LineChart(document.getElementById('LineOfSight'));
     chart.draw(data, options);
 }

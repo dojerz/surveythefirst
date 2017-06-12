@@ -133,15 +133,29 @@ function initDrawElements()
 {
     baseIcons = new Array();
 
-    towerIconUnselected = L.icon({
-        iconUrl: towerIconUrlUnselected,
+    towerIconUnselectedLOS = L.icon({
+        iconUrl: towerIconUrlUnselectedLOS,
         iconSize: [32, 32], // size of the icon
         iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
         popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
     });
 
-    towerIconSelected = L.icon({
-        iconUrl: towerIconUrlSelected,
+    towerIconSelectedLOS = L.icon({
+        iconUrl: towerIconUrlSelectedLOS,
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
+
+    towerIconUnselectedNLOS = L.icon({
+        iconUrl: towerIconUrlUnselectedNLOS,
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
+
+    towerIconSelectedNLOS = L.icon({
+        iconUrl: towerIconUrlSelectedNLOS,
         iconSize: [32, 32], // size of the icon
         iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
         popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
@@ -182,15 +196,4 @@ function getAngle(surveyLat, surveyLon, baseLat, baseLon)
     {
         jQuery('#MapAngle').val("-");
     }*/
-}
-
-function calcAngle(sLat, sLon, baseLat, baseLon) {
-    var basePoint = L.latLng(baseLat, baseLon);
-    var surveyPoint = L.latLng(sLat, sLon);
-    var angle = L.GeometryUtil.bearing(basePoint, surveyPoint);
-    if (angle < 0)
-    {
-        angle = 360 + angle;
-    }
-    return angle;
 }

@@ -1,7 +1,7 @@
 ﻿
 $(document).ready(function () {
 
-    surveyLat = jQuery('#InputLat');
+    /*surveyLat = jQuery('#InputLat');
     surveyLon = jQuery('#InputLon');
     surveyRadius = jQuery('#InputRadius');
     surveyAddress = jQuery('#InputAddress');
@@ -43,7 +43,7 @@ $(document).ready(function () {
     getBasePicturesButton.on('click', function (e) {
         //getPhotos(0);
         getPhotos('b');
-    });
+    });*/
 
 });
 
@@ -173,7 +173,7 @@ $(document).ready(function () {
     }
 //}
 
-function geoCoding(addr)
+/*function geoCoding(addr)
 {
     geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': addr }, function (results, status) {
@@ -185,7 +185,7 @@ function geoCoding(addr)
             getInput();
         }
     });
-}
+}*/
 
 function checkText(text, requiredLength, message1)
 {

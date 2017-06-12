@@ -110,17 +110,22 @@
 </div>
 
 <script>
-function onAjaxSuccess(data, status, xhr) {
-    if (data.error) {
-        $.notify({
-            type: "error",
-            text: data.message
-        });
-    }
-    else {
-        $('.modal').modal('hide');
-        getSurveysAfterSuccess();
-    }
+    function onAjaxSuccess(data, status, xhr)
+    {
+        $(".navbar-fixed-top").show();
+        $("#ActionButtons").show();
+        bases.restoreVisibility();
+        surveyMarker.restoreVisibility();
+        if (data.error) {
+            $.notify({
+                type: "error",
+                text: data.message
+            });
+        }
+        else {
+            $('.modal').modal('hide');
+            getSurveysAfterSuccess();
+        }
 }
 
 function getSurveysAfterSuccess()

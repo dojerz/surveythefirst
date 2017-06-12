@@ -1,4 +1,4 @@
-﻿function Base(baseID, lat, lon, name, settlement, building, transmission, capacity, altitude, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos)
+﻿function Base(baseID, lat, lon, name, settlement, building, transmission, capacity, height, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos)
 {
     var BaseID = baseID;
     var Lat = lat;
@@ -8,7 +8,7 @@
     var Building = building;
     var Transmission = transmission;
     var Capacity = capacity;
-    var Altitude = altitude;
+    var Height = height;
     var Distance = distance;
     var NumOfBPhotos = numOfBPhotos;
     var NumOfNPhotos = numOfNPhotos;
@@ -26,14 +26,16 @@
     this.getBuilding = function () { return Building; }
     this.getTransmission = function () { return Transmission; }
     this.getCapacity = function () { return Capacity; }
-    this.getAltitude = function () { return Altitude; }
+    this.getHeight = function () { return Height; }
     this.getDistance = function () { return Distance; }
     this.getNumOfBPhotos = function () { return NumOfBPhotos; }
     this.getNumOfNPhotos = function () { return NumOfNPhotos; }
     this.getNumOfFPhotos = function () { return NumOfFPhotos; }
+    this.setAngle = function (value) { Angle = value; }
     this.getAngle = function () { return Angle; }
     this.setTableRowIndex = function (value) { TableRowIndex = value; }
     this.getTableRowIndex = function () { return TableRowIndex; }
+    this.setLineOfSight = function (value) { HasLineOfSight = value; }
     this.hasLineOfSight = function() { return HasLineOfSight; }
     
     this.calculateAngleBySurveyCoords =
@@ -45,7 +47,7 @@
         Angle = angle;
     }
 
-    this.calculateLineOfSight =
+    /*this.calculateLineOfSight =
     function(surveyLat, surveyLon, surveyAltitude)
     {
         var elevator = new google.maps.ElevationService;
@@ -58,17 +60,18 @@
         {
             if (status == 'OK')
             {
-                HasLineOfSight = elevationCalculator(elevations, Distance * 1000, surveyAltitude, Altitude, true);
+                HasLineOfSight = elevationCalculator(elevations, Number(Distance * 1000), Number(surveyAltitude), Number(Altitude), true);
             }
             else
             {
+                HasLineOfSight = false;
                 alert("Átlátás vizsgálata nem sikerült!");
             }
         }
-    }
+    }*/
 
     this.drawElevationToSurveyPoint =
-    function (surveyLat, surveyLon, surveyAltitude, chart)
+    function (surveyLat, surveyLon, surveyHeight, chart)
     {
         var elevator = new google.maps.ElevationService;
         var path = [
@@ -79,8 +82,17 @@
         function elevationLoader(elevations, status)
         {
             if (status == 'OK') {
-                var elevation = elevationCalculator(elevations, Distance * 1000, surveyAltitude, Altitude, false);
-                drawCurveTypes(elevation, chart);
+                var elevation = elevationCalculator(elevations, Number(Distance * 1000), Number(surveyHeight), Number(Height), false);
+                /*if (HasLineOfSight)
+                {
+                    alert("Van átlátás!");
+                }
+                else
+                {
+                    alert("Nincs átlátás!");
+                }*/
+                google.charts.load('current', { packages: ['corechart', 'line'] });
+                google.charts.setOnLoadCallback(function () { drawCurveTypes(elevation, chart); });
             }
             else {
                 alert("Átlátás vizsgálata nem sikerült!");
@@ -89,18 +101,22 @@
     }
 }
 
-function BaseController(map, tableBody, bpb, npb, fpb, los)
+function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farPhotosButton, lineOfSightChart)
 {
     var Btrs;
     var Bases = new Array();
     var BaseIcons = new Array();
     var Map = map;
     var TableBody = tableBody;
-    var BasePhotosButton = bpb;
-    var NearPhotosButton = npb;
-    var FarPhotosButton = fpb;
-    var LineOfSightChart = los;
+    var BasePhotosButton = basePhotosButton;
+    var NearPhotosButton = nearPhotosButton;
+    var FarPhotosButton = farPhotosButton;
+    var LineOfSightChart = lineOfSightChart;
     var selectedBaseID = null;
+    var elevationService = new google.maps.ElevationService;
+    var SurveyMarker;
+    var Views;
+    var TempVisibility;
 
     BasePhotosButton.on('click', function (e) {
         getPhotos('b');
@@ -127,11 +143,66 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         setPhotoButton(FarPhotosButton, false);
     }
 
-    this.initBases =
-    function (surveyLat, surveyLon, surveyAltitude, baseList)
+
+    this.addViews =
+    function(views)
     {
-        Btrs = baseList;
-        var listLength = Btrs.length;
+        Views = views;
+    }
+
+
+    function calculateAngleBetweenSurveyMarkerAndBase(base, surveyMarker)
+    {
+        var surveyLat = surveyMarker.getWgsLat();
+        var surveyLon = surveyMarker.getWgsLon();
+        var angle = calcAngle(surveyLat, surveyLon, base.getLat(), base.getLon());
+        angle = Math.round(angle * 10) / 10;
+        angle = angle.toString().replace(",", ".");
+        return angle;
+
+            function calcAngle(sLat, sLon, baseLat, baseLon)
+            {
+                var basePoint = L.latLng(baseLat, baseLon);
+                var surveyPoint = L.latLng(sLat, sLon);
+                var angle = L.GeometryUtil.bearing(basePoint, surveyPoint);
+                if (angle < 0)
+                {
+                    angle = 360 + angle;
+                }
+                return angle;
+            }
+    }
+
+
+    function calculateLineOfSightBetweenSurveyMarkerAndBase(base, surveyMarker)
+    {
+        var surveyLat = surveyMarker.getWgsLat();
+        var surveyLon = surveyMarker.getWgsLon();
+        var surveyHeight = surveyMarker.getHeight();
+        var calculatedValue = null;
+        var path = [
+                    { lat: Number(surveyLat), lng: Number(surveyLon) },
+            	    { lat: Number(base.getLat()), lng: Number(base.getLon()) }
+                   ];
+        elevationService.getElevationAlongPath({ 'path': path, 'samples': 120 }, elevationLoader);
+
+        function elevationLoader(elevations, status) {
+            if (status == 'OK') {
+                base.setLineOfSight(elevationCalculator(elevations, Number(base.getDistance() * 1000), Number(surveyHeight), Number(base.getHeight()), true));
+            }
+            else {
+                base.setLineOfSight(false);
+                alert("Átlátás vizsgálata nem sikerült!");
+            }
+        }
+    }
+
+
+    this.initBases =
+    function (surveyMarker, baseList)
+    {
+        SurveyMarker = surveyMarker;
+        var listLength = baseList.length;
         var baseID;
         var lat;
         var lon;
@@ -140,7 +211,7 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         var building;
         var transmission;
         var capacity;
-        var altitude;
+        var height;
         var distance;
         var numOfBPhotos;
         var numOfNPhotos;
@@ -149,23 +220,24 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         Bases = new Array();
         for (var i = 0; i < listLength; i++)
         {
-            baseID = Btrs[i].getAttribute("baseid");
-            lat = Btrs[i].getAttribute("lat").replace(",", ".");
-            lon = Btrs[i].getAttribute("lon").replace(",", ".");
-            name = Btrs[i].getAttribute("name");
-            settlement = Btrs[i].getAttribute("settlement");
-            building = Btrs[i].getAttribute("building");
-            transmission = Btrs[i].getAttribute("transmission");
-            capacity = Btrs[i].getAttribute("capacity");
-            altitude = Btrs[i].getAttribute("altitude");
-            distance = Btrs[i].getAttribute("distance");
-            numOfBPhotos = Btrs[i].getAttribute("numofbphotos");
-            numOfNPhotos = Btrs[i].getAttribute("numofnphotos");
-            numOfFPhotos = Btrs[i].getAttribute("numoffphotos");
-            base = new Base(baseID, lat, lon, name, settlement, building, transmission, capacity, altitude, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos);
-            base.calculateAngleBySurveyCoords(surveyLat, surveyLon);
+            baseID = baseList[i].getAttribute("baseid");
+            lat = baseList[i].getAttribute("lat").replace(",", ".");
+            lon = baseList[i].getAttribute("lon").replace(",", ".");
+            name = baseList[i].getAttribute("name");
+            settlement = baseList[i].getAttribute("settlement");
+            building = baseList[i].getAttribute("building");
+            transmission = baseList[i].getAttribute("transmission");
+            capacity = baseList[i].getAttribute("capacity");
+            height = baseList[i].getAttribute("altitude").replace(",", ".");
+            distance = baseList[i].getAttribute("distance").replace(",", ".");
+            numOfBPhotos = baseList[i].getAttribute("numofbphotos");
+            numOfNPhotos = baseList[i].getAttribute("numofnphotos");
+            numOfFPhotos = baseList[i].getAttribute("numoffphotos");
+            base = new Base(baseID, lat, lon, name, settlement, building, transmission, capacity, height, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos);
+            base.setAngle(calculateAngleBetweenSurveyMarkerAndBase(base, surveyMarker));
             base.setTableRowIndex(i);
-            base.calculateLineOfSight(surveyLat, surveyLon, surveyAltitude);
+            calculateLineOfSightBetweenSurveyMarkerAndBase(base, surveyMarker);
+            //base.calculateLineOfSight(surveyLat, surveyLon, surveyHeight);
             Bases.push(base);
         }
 
@@ -193,6 +265,7 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
     {
         fillBaseTablePrivate();
         drawBasesOnMapPrivate();
+        SurveyMarker.drawMarkerOnMap();
     }
 
     this.drawBasesOnMap =
@@ -215,11 +288,25 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         {
             if (Bases[i].getBaseID() == selectedBaseID)
             {
-                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                if (Bases[i].hasLineOfSight())
+                {
+                    BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelectedLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                }
+                else
+                {
+                    BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelectedNLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                }
             }
             else
             {
-                BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                if (Bases[i].hasLineOfSight())
+                {
+                    BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselectedLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                }
+                else
+                {
+                    BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselectedNLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
+                }
             }
             Map.addLayer(BaseIcons[i]);
             BaseIcons[i].bindPopup("<b>Bázis</b><br />");
@@ -244,19 +331,33 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
             row.setAttribute("onclick", "bases.baseTableEvent(this)");
             if (Bases[i].getBaseID() == selectedBaseID)
             {
-                row.className = "selected";
+                if (Bases[i].hasLineOfSight())
+                {
+                    row.className = "selectedLos";
+                }
+                else
+                {
+                    row.className = "selectedNLos";
+                }
                 setPhotoButtonsToBase(Bases[i]);
             }
             else
             {
-                row.className = "unSelected";
+                if (Bases[i].hasLineOfSight())
+                {
+                    row.className = "unSelectedLos";
+                }
+                else
+                {
+                    row.className = "unSelectedNLos";
+                }
             }
             row.insertCell(0).innerHTML = Bases[i].getName();
             row.insertCell(1).innerHTML = Bases[i].getSettlement();
             row.insertCell(2).innerHTML = Bases[i].getBuilding();
             row.insertCell(3).innerHTML = Bases[i].getTransmission();
             row.insertCell(4).innerHTML = Bases[i].getCapacity();
-            row.insertCell(5).innerHTML = Bases[i].getAltitude();
+            row.insertCell(5).innerHTML = Bases[i].getHeight();
             row.insertCell(6).innerHTML = Bases[i].getDistance();
             row.insertCell(7).innerHTML = Bases[i].getAngle();
         }
@@ -284,8 +385,16 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         if (base.getBaseID() == selectedBaseID)
         {
             selectedBaseID = null;
-            TableBody.rows[i].setAttribute("class", "unSelected");
-            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+            if (base.hasLineOfSight())
+            {
+                TableBody.rows[i].setAttribute("class", "unSelectedLos");
+                BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselectedLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+            }
+            else
+            {
+                TableBody.rows[i].setAttribute("class", "unSelectedNLos");
+                BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconUnselectedNLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+            }
             BaseIcons[i].bindPopup("<b>Bázis</b><br />");
             setToDefaultPrivate();
         }
@@ -297,22 +406,43 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
                 if (otherBase)
                 {
                     j = otherBase.getTableRowIndex();
-                    TableBody.rows[j].setAttribute("class", "unSelected");
                     Map.removeLayer(BaseIcons[j]);
-                    BaseIcons[j] = new L.marker(Bases[j].getCoordsWGS(), { icon: towerIconUnselected, baseID: Bases[j].getBaseID(), rowIndex: Bases[j].getTableRowIndex() }).on('click', clickOnBaseEvent);
+                    if (otherBase.hasLineOfSight())
+                    {
+                        TableBody.rows[j].setAttribute("class", "unSelectedLos");
+                        BaseIcons[j] = new L.marker(Bases[j].getCoordsWGS(), { icon: towerIconUnselectedLOS, baseID: Bases[j].getBaseID(), rowIndex: Bases[j].getTableRowIndex() }).on('click', clickOnBaseEvent);
+                    }
+                    else
+                    {
+                        TableBody.rows[j].setAttribute("class", "unSelectedNLos");
+                        BaseIcons[j] = new L.marker(Bases[j].getCoordsWGS(), { icon: towerIconUnselectedNLOS, baseID: Bases[j].getBaseID(), rowIndex: Bases[j].getTableRowIndex() }).on('click', clickOnBaseEvent);
+                    }
                     Map.addLayer(BaseIcons[j]);
                     BaseIcons[j].bindPopup("<b>Bázis</b><br />");
                 }
             }
-            Bases[i].drawElevationToSurveyPoint(getLatForClient(), getLonForClient(), getAltitude(), LineOfSightChart);
-            TableBody.rows[i].setAttribute("class", "selected");
+            Bases[i].drawElevationToSurveyPoint(SurveyMarker.getWgsLat(), SurveyMarker.getWgsLon(), SurveyMarker.getHeight(), LineOfSightChart);
+            var target/*.scrollIntoView()*/;
             selectedBaseID = Bases[i].getBaseID();
-            BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelected, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+            if (Bases[i].hasLineOfSight())
+            {
+                TableBody.rows[i].setAttribute("class", "selectedLos");
+                BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelectedLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+                target = $(".selectedLos")[0];
+                target.parentNode.scrollTop = (target.offsetTop - 50);
+            }
+            else
+            {
+                TableBody.rows[i].setAttribute("class", "selectedNLos");
+                BaseIcons[i] = new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelectedNLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent);
+                target = $(".selectedNLos")[0];
+                target.parentNode.scrollTop = (target.offsetTop - 50);
+            }
             setPhotoButtonsToBase(base);
         }
         Map.addLayer(BaseIcons[i]);
         BaseIcons[i].bindPopup("<b>Bázis</b><br />");
-        surveyMarker.drawSurvey(Map);
+        surveyMarker.drawSurveyLine();
         //checkPhotos();
     }
 
@@ -359,6 +489,17 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         }
     }
 
+    this.getSelectedBaseLOS =
+    function()
+    {
+        if (selectedBaseID) {
+            var selectedBase = getBaseByBaseID(selectedBaseID);
+            if (selectedBase) {
+                return selectedBase.hasLineOfSight();
+            }
+        }
+    }
+
     function setPhotoButton(photoButton, isEnabled)
     {
         if (isEnabled)
@@ -392,6 +533,70 @@ function BaseController(map, tableBody, bpb, npb, fpb, los)
         }
         else {
             setPhotoButton(FarPhotosButton, false);
+        }
+    }
+
+
+    this.changeViewVisibility =
+    function (viewID)
+    {
+        if (viewID <= Views.length - 1)
+        {
+            if (Views[viewID].is(":visible")) {
+                Views[viewID].hide();
+            }
+            else {
+                Views[viewID].show();
+            }
+        }
+        else
+        {
+            alert("BaseController hiba: " + viewID + " azonosítóval rendelkező view nem létezik!");
+        }
+    }
+
+    this.saveVisibility =
+    function()
+    {
+        TempVisibility = new Array();
+        var listLength = Views.length;
+        for(var i = 0; i < listLength; i++)
+        {
+            if (Views[i].is(":visible")) {
+                TempVisibility.push(true);
+            }
+            else {
+                TempVisibility.push(false);
+            }
+        }
+    }
+
+    this.restoreVisibility =
+    function ()
+    {
+        var listLength = TempVisibility.length;
+        for (var i = 0; i < listLength; i++)
+        {
+            if (TempVisibility[i]) {
+                Views[i].show();
+            }
+            else {
+                Views[i].hide();
+            }
+        }
+    }
+
+    this.hideAllViews =
+    function(isUserAction)
+    {
+        var listLength = Views.length;
+        if(!isUserAction)
+        {
+            this.saveVisibility();
+        }
+        for (var i = 0; i < listLength; i++)
+        {
+            Views[i].hide();
         }
     }
 }
