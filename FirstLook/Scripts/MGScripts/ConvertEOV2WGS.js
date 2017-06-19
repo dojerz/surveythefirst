@@ -14,7 +14,7 @@ function eovTOwgs84(a, b)
     return wgsCoord;
 }
 
-function eovTOhd72(b, a)
+function eovTOhd72(a, b)
 {
     var x = 180 * 3600 / Math.PI;
     var c = 1.0007197049;

@@ -307,14 +307,6 @@
     <Content Include="App_Data\Bazisok_log.ldf">
       <DependentUpon>Bazisok.mdf</DependentUpon>
     </Content>
-    <Content Include="App_Data\testDB.mdf" />
-    <Content Include="App_Data\testDB_log.ldf">
-      <DependentUpon>testDB.mdf</DependentUpon>
-    </Content>
-    <Content Include="App_Data\UpcMacroDB.mdf" />
-    <Content Include="App_Data\UpcMacroDB_log.ldf">
-      <DependentUpon>UpcMacroDB.mdf</DependentUpon>
-    </Content>
     <Content Include="BaseAndBuildingType.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>BaseAndBuildingType.edmx</DependentUpon>
@@ -357,21 +349,24 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\ArrowLeft.png" />
+    <Content Include="Content\Images\ArrowLeftGreen.png" />
+    <Content Include="Content\Images\ArrowLeftGrey.png" />
     <Content Include="Content\Images\customerACTIVE.png" />
     <Content Include="Content\Images\customerFALSE.png" />
     <Content Include="Content\Images\customerOK.png" />
+    <Content Include="Content\Images\FreeMarkerDisabled.png" />
+    <Content Include="Content\Images\FreeMarkerEnabled.png" />
+    <Content Include="Content\Images\infoImg.png" />
+    <Content Include="Content\Images\lockImg.png" />
     <Content Include="Content\Images\rTower.png" />
     <Content Include="Content\Images\rTower3.png" />
     <Content Include="Content\Images\rTower4.png" />
     <Content Include="Content\Images\rTowerBlack.jpg" />
-    <Content Include="Content\Images\rTowerGrey.jpg" />
     <Content Include="Content\Images\rTowerGrey.png" />
-    <Content Include="Content\Images\rTowerOrange.jpg" />
     <Content Include="Content\Images\rTowerOrange.png" />
     <Content Include="Content\Images\rTowerPink.jpg" />
-    <Content Include="Content\Images\rTowerPurple.jpg" />
     <Content Include="Content\Images\rTowerPurple.png" />
-    <Content Include="Content\Images\rTowerRed.jpg" />
     <Content Include="Content\Images\rTowerRed.png" />
     <Content Include="Content\Survey.css" />
     <Content Include="Content\viewer.css" />
@@ -454,6 +449,7 @@
     <Content Include="EntityModel.edmx.diagram">
       <DependentUpon>EntityModel.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\SurveyTool.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -481,7 +477,9 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\viewer.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

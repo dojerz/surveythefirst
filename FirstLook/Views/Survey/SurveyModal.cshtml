@@ -103,13 +103,20 @@
                 </div>
             </div>
                 <div class="modal-footer modbg">
-                    <button class="btn btn-inverse" type="submit">Save</button>
+                    <button class="btn btn-inverse" type="submit">Mentés</button>
                 </div>
         }
     </div>
 </div>
 
 <script>
+
+    $(".close").on('click', function (e) {
+        bases.restoreVisibility();
+        surveyMarker.restoreVisibility();
+        $("#ActionButtons").show();
+    });
+
     function onAjaxSuccess(data, status, xhr)
     {
         $(".navbar-fixed-top").show();

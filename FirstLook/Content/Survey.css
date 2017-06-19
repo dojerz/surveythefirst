@@ -10,18 +10,18 @@
 #SurveyTable tr td
 {
     padding-bottom: 0.5em;
-    padding-right: 1em;
+    padding-right: 0.5em;
 }
 
-#AddressButton
+#StartSurveyButton
 {
-    background-color: #cc7a00;
+    /*background-color: #cc7a00;
     color: white;
     padding: 5px 5px;
     text-align: center;
     font-size: 14px;
     font-weight: bold;
-    float:right;
+    float:right;*/
 }
 
 #FilterTable
@@ -159,7 +159,8 @@
     max-width:100%;
     position:relative;
     overflow:hidden;
-    top:2px;
+    top:0px;
+    padding:0px;
     /*height: 100%;
     width: 100%;
     position:relative;
@@ -184,8 +185,21 @@
     z-index:400000;
     pointer-events: initial;
     display: inline-block;
+    /*opacity: 0.5;*/
     /*border-style:inset;
     border-color:brown;*/
+}
+
+#StartSurveyBackground
+{
+    background-color:#e0e0eb;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    z-index:-1;
 }
 
 #TableSection
@@ -209,8 +223,18 @@
 #ActionButtons
 {
     position:absolute;
-    top:90%;
-    left:75%;
+    top:93%;
+    left:67%;
+    z-index:400000;
+    pointer-events: initial;
+    display: inline-block;
+}
+
+#Sandbox
+{
+    position:absolute;
+    top:80%;
+    left:94%;
     z-index:400000;
     pointer-events: initial;
     display: inline-block;
@@ -222,6 +246,9 @@
     top:80%;
     left:4%;
     z-index:700000;
+    display: inline-block;
+    border-style:inset;
+    border-color:brown;
 }
 
 .container
@@ -236,11 +263,12 @@
 .navbar-fixed-top
 {
     z-index:500000;
+    display:none;
 }
 
 .DataText
 {
-    background-color:#660033;
+    background-color:#9292b9;
     color:white;
     font-weight:bold;
     display: inline-block;
@@ -258,3 +286,82 @@
     z-index:900000;
 }
 
+footer
+{
+    display:none;
+}
+
+body
+{
+    padding:0px;
+    overflow:hidden;
+}
+
+.body-content
+{
+    padding:0px;
+}
+
+#ConvertEOVArrow
+{
+    height:30px;
+    width:30px;
+}
+
+#LockAddressButton
+{
+    height:20px;
+    width:20px;
+}
+
+.MyInfoButton
+{
+    height:20px;
+    width:20px;
+}
+
+#InputAddress
+{
+    width:100%;
+}
+
+#Tabs
+{
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    /*overflow: hidden;*/
+}
+
+#Tabs button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 4px 16px;
+    transition: 0.3s;
+}
+
+#Tabs button:hover {
+    background-color: #ddd;
+}
+
+#Tabs button.active {
+    background-color: #ffc299;
+}
+
+#StartSurveyData1
+{
+    padding-top:40px;
+}
+
+#StartSurveyData2
+{
+    padding-top:40px;
+}
+
+#SandboxSurveyButton
+{
+    height:70px;
+    width:70px;
+}

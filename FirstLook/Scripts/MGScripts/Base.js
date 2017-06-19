@@ -70,7 +70,7 @@
         }
     }*/
 
-    this.drawElevationToSurveyPoint =
+    /*this.drawElevationToSurveyPoint =
     function (surveyLat, surveyLon, surveyHeight, chart)
     {
         var elevator = new google.maps.ElevationService;
@@ -83,22 +83,15 @@
         {
             if (status == 'OK') {
                 var elevation = elevationCalculator(elevations, Number(Distance * 1000), Number(surveyHeight), Number(Height), false);
-                /*if (HasLineOfSight)
-                {
-                    alert("Van átlátás!");
-                }
-                else
-                {
-                    alert("Nincs átlátás!");
-                }*/
                 google.charts.load('current', { packages: ['corechart', 'line'] });
                 google.charts.setOnLoadCallback(function () { drawCurveTypes(elevation, chart); });
             }
-            else {
+            else
+            {
                 alert("Átlátás vizsgálata nem sikerült!");
             }
         }
-    }
+    }*/
 }
 
 function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farPhotosButton, lineOfSightChart)
@@ -178,7 +171,7 @@ function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farP
     {
         var surveyLat = surveyMarker.getWgsLat();
         var surveyLon = surveyMarker.getWgsLon();
-        var surveyHeight = surveyMarker.getHeight();
+        var surveyHeight = surveyMarker.getHeight(); //alert("LOS: " + surveyLat + ", " + surveyLon + ", " + surveyHeight);
         var calculatedValue = null;
         var path = [
                     { lat: Number(surveyLat), lng: Number(surveyLon) },
@@ -190,8 +183,45 @@ function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farP
             if (status == 'OK') {
                 base.setLineOfSight(elevationCalculator(elevations, Number(base.getDistance() * 1000), Number(surveyHeight), Number(base.getHeight()), true));
             }
+            else if (status == 'INVALID_REQUEST')
+            {
+                alert('INVALID_REQUEST');
+            }
+            else if (status == 'OVER_QUERY_LIMIT') {
+                alert('OVER_QUERY_LIMIT');
+            }
+            else if (status == 'REQUEST_DENIED') {
+                alert('REQUEST_DENIED');
+            }
+            else if (status == 'UNKNOWN_ERROR') {
+                alert('UNKNOWN_ERROR');
+            }
             else {
                 base.setLineOfSight(false);
+                alert("Átlátás vizsgálata nem sikerült!");
+            }
+        }
+    }
+
+
+    function drawElevationToSurveyPoint(base, surveyMarker, chart)
+    {
+        var surveyLat = surveyMarker.getWgsLat();
+        var surveyLon = surveyMarker.getWgsLon();
+        var surveyHeight = surveyMarker.getHeight();
+        var calculatedValue = null;
+        var path = [
+                { lat: Number(surveyLat), lng: Number(surveyLon) },
+            	{ lat: Number(base.getLat()), lng: Number(base.getLon()) }];
+        elevationService.getElevationAlongPath({ 'path': path, 'samples': 120 }, elevationLoader);
+
+        function elevationLoader(elevations, status) {
+            if (status == 'OK') {
+                var elevation = elevationCalculator(elevations, Number(base.getDistance() * 1000), Number(surveyHeight), Number(base.getHeight()), false);
+                google.charts.load('current', { packages: ['corechart', 'line'] });
+                google.charts.setOnLoadCallback(function () { drawCurveTypes(elevation, chart); });
+            }
+            else {
                 alert("Átlátás vizsgálata nem sikerült!");
             }
         }
@@ -236,7 +266,7 @@ function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farP
             base = new Base(baseID, lat, lon, name, settlement, building, transmission, capacity, height, distance, numOfBPhotos, numOfNPhotos, numOfFPhotos);
             base.setAngle(calculateAngleBetweenSurveyMarkerAndBase(base, surveyMarker));
             base.setTableRowIndex(i);
-            calculateLineOfSightBetweenSurveyMarkerAndBase(base, surveyMarker);
+            calculateLineOfSightBetweenSurveyMarkerAndBase(base, surveyMarker, true);
             //base.calculateLineOfSight(surveyLat, surveyLon, surveyHeight);
             Bases.push(base);
         }
@@ -296,6 +326,7 @@ function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farP
                 {
                     BaseIcons.push(new L.marker(Bases[i].getCoordsWGS(), { icon: towerIconSelectedNLOS, baseID: Bases[i].getBaseID(), rowIndex: Bases[i].getTableRowIndex() }).on('click', clickOnBaseEvent));
                 }
+                drawElevationToSurveyPoint(Bases[i], SurveyMarker, LineOfSightChart);
             }
             else
             {
@@ -421,7 +452,7 @@ function BaseController(map, tableBody, basePhotosButton, nearPhotosButton, farP
                     BaseIcons[j].bindPopup("<b>Bázis</b><br />");
                 }
             }
-            Bases[i].drawElevationToSurveyPoint(SurveyMarker.getWgsLat(), SurveyMarker.getWgsLon(), SurveyMarker.getHeight(), LineOfSightChart);
+            drawElevationToSurveyPoint(Bases[i], SurveyMarker, LineOfSightChart);
             var target/*.scrollIntoView()*/;
             selectedBaseID = Bases[i].getBaseID();
             if (Bases[i].hasLineOfSight())

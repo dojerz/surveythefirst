@@ -5,21 +5,33 @@
 <div id="MyContainer">
     <div id="Map"></div>
         <div id="StartSurvey">
-            <p style=" background-color:brown; color:white; font-weight:bold; font-size:large; display:inline-block; padding-left:2px; padding-right:2px">Ügyfél mérési adatai a bázisok lekérdezéséhez:</p>
+            <div id="StartSurveyBackground"></div>
+            <div id="Tabs">
+                <button id="BaseDataTab" type="button">Általános ügyfél adatok</button>
+                <button id="SurveyDataTab" type="button">Mérési ügyfél adatok</button>
+            </div>
+            <div id="StartSurveyData1">
+                Ide jönnek a közvetlenül a méréshez nnem tartozó adatok.
+            </div>
+            <div id="StartSurveyData2">
+                    <!--<p style=" background-color:brown; color:white; font-weight:bold; font-size:large; display:inline-block; padding-left:2px; padding-right:2px">Ügyfél mérési adatai a bázisok lekérdezéséhez:</p>-->
                     <table id="SurveyTable">
                         <tr>
                             <td>
                                 <div class="DataText">Helyszín címe:</div>
                             </td>
-                            <td colspan="3">
-                                <input id="InputAddress" type="text" size="40">
+                            <td colspan="4">
+                                <input id="InputAddress" type="text">
+                            </td>
+                            <td>
+                                <img id="LockAddressButton" alt="Lock" title="Cím rögzítése (műveletek során nem fog változni a cím)">
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div class="DataText">Épület Magassága:</div>
                             </td>
-                            <td colspan="3">
+                            <td colspan="4">
                                 <input id="InputHeight" type="text" size="4"><div class="DataText">m</div>
                             </td>
                         </tr>
@@ -27,8 +39,11 @@
                             <td>
                                 <div class="DataText">Bázis max. távolsága:</div>
                             </td>
-                            <td colspan="3">
+                            <td colspan="4">
                                 <input id="InputRadius" type="text" size="4"><div class="DataText">km</div>
+                            </td>
+                            <td>
+                                <img class="MyInfoButton" id="KmInfoButton" alt="KmInfo" title="0-99 értéket vehet fel">
                             </td>
                         </tr>
                         <tr>
@@ -38,11 +53,17 @@
                             <td>
                                 <input id="InputLat" type="text" size="8">
                             </td>
+                            <td rowspan="2">
+                                <img id="ConvertEOVArrow" alt="Convert" title="EOV WGS-be alakítása">
+                            </td>
                             <td>
                                 <div class="DataText">EOVX:</div>
                             </td>
                             <td>
                                 <input id="InputEOVX" type="text" size="8" style="float:right">
+                            </td>
+                            <td>
+                                <img class="MyInfoButton" id="EOVInfoButton" alt="EOV" title="6 számjegyből álló egész szám (pl. 098000 vagy 200000)">
                             </td>
                         </tr>
                         <tr>
@@ -58,13 +79,23 @@
                             <td>
                                 <input id="InputEOVY" type="text" size="8" style="float:right">
                             </td>
+                            <!--<tr>
+                        <td colspan="5">
+                            <button id="AddressButton" type="button">Felmérés indítása</button>
+                        </td>
+                    </tr>-->
                         <tr>
+                            <td>
+                                <div class="DataText">Ügyfél elhelyezése:</div>
+                            </td>
                             <td colspan="4">
-                                <button id="AddressButton" type="button">Felmérés indítása</button>
+                                <button id="PlaceByCoordButton" type="button">Koordináta szerint</button>
+                                <button id="PlaceByAddressButton" type="button" style="float:right">Cím szerint</button>
                             </td>
                         </tr>
                     </table>
-    </div>
+            </div>
+            </div>
     <div id="TableSection">
         <div style="color:#cc0099;font-weight: bold">
             Szóba jöhető bázisok:
@@ -107,13 +138,17 @@
             <button style="float:right" id="GetBasePhotosButton" type="button" class="disabledButton">Bázis</button>
         </div>
     </div>
+    <div id="LineOfSight"></div>
     <div id="ActionButtons">
         <button style=" background-color:blueviolet; color:white;" id="BaseButton" type="button">Bázis adatok</button>
         <button style=" background-color:brown; color:white;" id="LosButton" type="button">Átlátás</button>
         <button style=" background-color:crimson; color:white;" id="CustomerButton" type="button">Ügyfél adatok</button>
         <button style=" background-color:darkgreen; color:white;" id="SaveButton" type="button">Felmérés mentése</button>
+        <button id="StartSurveyButton" type="button">Felmérés</button>
     </div>
-    <div id="LineOfSight"></div>
+    <div id="Sandbox">
+        <img id="SandboxSurveyButton" alt="Lock" title="Ügyfél helyének szabad jelölése">
+    </div>
 </div>
 
     <div id="Surveys"></div>
@@ -184,8 +219,15 @@
 
        function init()
        {
-           surveyMarker = new SurveyMarker(map, jQuery('#InputAddress'), jQuery('#AddressButton'), jQuery('#InputLat'), jQuery('#InputLon'), jQuery('#InputRadius'), jQuery('#InputHeight'));
-           surveyMarker.addViews([$("#StartSurvey")]);
+           lockImage = "@Url.Content("~/Content/Images/lockImg.png")"
+           greyArrow = '@Url.Content("~/Content/Images/ArrowLeftGrey.png")';
+           greenArrow = '@Url.Content("~/Content/Images/ArrowLeftGreen.png")';
+           freeMarkerDisabledImage = '@Url.Content("~/Content/Images/FreeMarkerDisabled.png")';
+           freeMarkerEnabledImage = '@Url.Content("~/Content/Images/FreeMarkerEnabled.png")';
+           surveyMarker = new SurveyMarker(map, jQuery('#InputAddress'), jQuery('#StartSurveyButton'), jQuery('#InputLat'), jQuery('#InputLon'), jQuery('#InputEOVX'),
+                                           jQuery('#InputEOVY'), jQuery('#InputRadius'), jQuery('#InputHeight'), jQuery('#ConvertEOVArrow'), jQuery('#PlaceByCoordButton'),
+                                           jQuery('#PlaceByAddressButton'), jQuery('#LockAddressButton'), jQuery('#BaseDataTab'), jQuery('#SurveyDataTab'), jQuery('#SandboxSurveyButton'));
+           surveyMarker.addViews([$("#StartSurvey"), $("#Sandbox")]);
            bases = new BaseController(map, $('#FilterTable tbody')[0], $('#GetBasePhotosButton'), $('#GetNearPhotosButton'), $('#GetFarPhotosButton'), $('#LineOfSight'));
            bases.addViews([$("#TableSection"), $("#LineOfSight")]);
            bases.setToDefault();
@@ -194,14 +236,18 @@
            jQuery('#BaseButton').on("click", function () { bases.changeViewVisibility(0); });
            jQuery('#LosButton').on("click", function () { bases.changeViewVisibility(1); });
            jQuery('#CustomerButton').on("click", function () { surveyMarker.changeViewVisibility(0); });
+
+           jQuery('#KmInfoButton').attr('src', "@Url.Content("~/Content/Images/infoImg.png")");
+           jQuery('#EOVInfoButton').attr('src', "@Url.Content("~/Content/Images/infoImg.png")");
            //jQuery('#Surveys').on("click", function () { });
        }
 
        function queryBasesFromDatabase()
        {
+           //alert("queryBasesFromDatabase");
            var lat = surveyMarker.getWgsLatForServer();
            var lon = surveyMarker.getWgsLonForServer();
-           var r = surveyMarker.getRadiusForServer();
+           var r = surveyMarker.getRadiusForServer(); //alert(lat + ", " + lon + ", " + r);
            jQuery('#Bases').load('@Url.Action("FilteredBases", "Base")?init=' + 1 + '&xCoord=' + lat + '&yCoord=' + lon + '&radius=' + r, filteredBasesListIsReady);
 
            function filteredBasesListIsReady()
@@ -277,7 +323,7 @@
                     },
                     hidden: function (e) {
                         $(this).viewer('destroy');
-                        $(".navbar-fixed-top").show();
+                        //$(".navbar-fixed-top").show();
                         $("#ActionButtons").show();
                         bases.restoreVisibility();
                         surveyMarker.restoreVisibility();

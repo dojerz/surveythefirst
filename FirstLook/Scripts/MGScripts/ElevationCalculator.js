@@ -87,9 +87,11 @@ function drawCurveTypes(elev, chartDiv) {
             1: { curveType: 'function' }
         },
         fontSize: 11,
-        height: 110,
+        height: 150,
+        width: 700,
         chartArea: {
-            width: 900,
+            height: 110,
+            width: 500,
             left: 70
         }
 
